@@ -3,7 +3,8 @@
     import app from '$lib/services/initFirebase';
     import TextInput from '$lib/components/TextInput.svelte';
     import { getArtistLyrics } from '$lib/services/artistService';
-    import QuoteDisplay from '$lib/components/QuoteDisplay.svelte';
+    import LyricDisplay from '$lib/components/LyricDisplay.svelte';
+    import AppWindow from '$lib/components/AppWindow.svelte';
 
     let artist = '';
     let lyrics = ''; // This will store the lyrics returned from the service
@@ -41,16 +42,8 @@
 <TextInput placeholder="Type an artist" on:keypress={handleArtistKeyPress} bind:value={artist} />
 
 <!-- Display the lyrics -->
-{#if lyrics}
-    <QuoteDisplay {lyrics} />
-{/if}
-
-<style>
-    .lyrics {
-        white-space: pre-wrap; /* Preserves whitespace and line breaks in the lyrics */
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border-radius: 8px;
-    }
-</style>
+<AppWindow>
+    {#if lyrics}
+      <LyricDisplay {lyrics} />
+    {/if}
+  </AppWindow>

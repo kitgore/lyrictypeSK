@@ -3,10 +3,17 @@
     src: url('sysfont.otf') format('opentype');
   }
 @font-face {
-  font-family: 'SysFont' ;
+  font-family: 'SysFont';
   src: url(ChicagoFLF.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Geneva';
+  src: url(GenevaRegular.ttf) format('truetype');
 }
 
 body {
     font-family: 'SysFont', sans-serif; /* Fallback to sans-serif if the custom font fails to load */
-}
+    image-rendering: auto;
+    -webkit-font-smoothing: antialiased; /* For WebKit browsers like Chrome and Safari */
+    -moz-osx-font-smoothing: grayscale; /* For Firefox */
+  }
