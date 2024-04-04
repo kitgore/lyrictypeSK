@@ -107,12 +107,13 @@
     white-space: pre-wrap;
     margin-top: 20px;
     padding: 10px;
-    background-color: #f0f0f0;
+    /* background-color: #f0f0f0; */
     border-radius: 8px;
     letter-spacing: -.18em;
     font-family: "Geneva", sans-serif;
-    font-size: 2em;
-    line-height: 200%;
+    font-size: 1.6em;
+    line-height: 180%;
+    font-weight: 500;
   }
 
   .quote-input {

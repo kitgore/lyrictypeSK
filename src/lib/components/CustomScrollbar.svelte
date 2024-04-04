@@ -63,7 +63,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between; /* Adjusts spacing between children */
-        height: 90%; /* Subtracting the 5% padding from top and bottom */
+        height: 80%; /* Subtracting the 5% padding from top and bottom */
         width: var(--scrollbar-width); /* Width is set via JavaScript */
         margin: 3% 0; /* 5% margin from top and bottom */
     }

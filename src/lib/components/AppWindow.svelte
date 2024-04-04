@@ -29,7 +29,7 @@
 .app-window {
     display: flex;
     flex-direction: column;
-    height: 70vh; /* Full height of the viewport */
+    height: 78vh; /* Full height of the viewport */
     width: 80%; /* Assuming the container should span the entire width */
 }
 
@@ -82,9 +82,9 @@
 }
 
 .content-area {
-    width: 92%; /* Take up the majority of the space */
+    width: 90%; /* Take up the majority of the space */
     overflow-y: auto; /* If the content overflows, let it scroll */
-    margin-right: 2%; /* Spacing between content and scrollbar */
+    margin-right: 4%; /* Spacing between content and scrollbar */
 }
 </style>
   
