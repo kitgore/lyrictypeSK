@@ -70,15 +70,15 @@ exports.searchArtistAndFetchLyrics = functions.https.onCall(async (data, context
         const shuffledSearches = shuffleArray(searches);
         const song = shuffledSearches[0]; // Select the first song after shuffling
         const lyrics = await song.lyrics();
+        const songInfo = await song.fetch();
         const formattedLyrics = formatChars(lyrics);
         const randomLyricsSegment = extractRandomLyricsSegment(formattedLyrics);
 
         const response = {
             title: song.title,
             artist: song.artist.name,
-            lyrics: randomLyricsSegment, // Use the extracted random lyrics segment
-            album: song.album ? song.album.name : "Unknown",
-            image: song.album ? song.album.image : null,
+            lyrics: randomLyricsSegment,
+            image: songInfo.album ? songInfo.album.image : null,
         };
 
         return response;

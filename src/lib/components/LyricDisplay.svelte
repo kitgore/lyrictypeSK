@@ -1,20 +1,32 @@
 <script>
   import { onMount } from 'svelte';
-  export let lyrics = '';
+  import ResultsDisplay from './ResultsDisplay.svelte';
+  export let lyrics;
+  export let songTitle;
+  export let artistName;
+  export let imageUrl;
   let userInput = '';
   let startTime = null;
   let endTime = null;
   let testStarted = false;
   let cursorPosition = 0;
   let inputElement;
-
-  //TODO:
-  // Add a blinking cursor to the input field
-  // Do not allow chacter typing on spaces/tabs
-  // Replace incorrect characters with typed characters (in red)
+  let showResults = false;
+  let wpm = 0;
+  let accuracy = 0;
+  let preloadedImage;
+  console.log(songTitle, artistName, imageUrl);
   
+  async function preloadImage(src) {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      preloadedImage = img;
+    };
+  }
+
   function focusInput() {
-    inputElement.focus();
+    if(inputElement) inputElement.focus();
   }
   
   onMount(() => {
@@ -25,6 +37,7 @@
     if (!testStarted) {
       startTime = new Date();
       testStarted = true;
+      preloadImage(imageUrl);
     }
   }
 
@@ -33,14 +46,22 @@
     endTime = new Date();
     const durationInMinutes = (endTime - startTime) / 60000;
     const charactersTyped = userInput.length; // Use userInput length instead
-    const wpm = (charactersTyped / 5) / durationInMinutes;
+    wpm = (charactersTyped / 5) / durationInMinutes;
 
     // Make sure to calculate accuracy after the entire userInput is processed
     const incorrectChars = formattedLyrics.reduce((acc, { class: charClass }) => acc + (charClass === 'incorrect' ? 1 : 0), 0);
-    const accuracy = ((charactersTyped - incorrectChars) / lyrics.length) * 100; // Ensure to divide by total lyrics length for accuracy
+    accuracy = ((charactersTyped - incorrectChars) / lyrics.length) * 100; // Ensure to divide by total lyrics length for accuracy
+    showResults = true;
 
     console.log(`WPM: ${wpm.toFixed(2)}, Accuracy: ${accuracy.toFixed(2)}%`);
   }
+
+  $: if (lyrics){
+    showResults = false;
+    userInput = '';
+    focusInput();
+    testStarted = false;
+  };
 
   // Reactive statement to update formattedLyrics based on lyrics
   $: formattedLyrics = lyrics.split('').map((char, index) => {
@@ -86,7 +107,9 @@
   $: cursorPosition = userInput.length;
 </script>
 
-<!-- Add an onclick handler to the lyrics container -->
+{#if showResults && preloadedImage}
+  <ResultsDisplay {wpm} {accuracy} {songTitle} {artistName} imageUrl={preloadedImage.src} />
+{:else}
 <div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>
   {#each formattedLyrics as { char, class: spanClass }, i}
     {#if i === cursorPosition}
@@ -99,10 +122,14 @@
     <span class="blinking-cursor"></span>
   {/if}
 </div>
-
+{/if}
 <input bind:this={inputElement} class="quote-input" type="text" bind:value={userInput} />
 
+
 <style>
+  * {
+    box-sizing: border-box;
+  }
   .quote-display{
     white-space: pre-wrap;
     margin-top: 20px;

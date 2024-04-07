@@ -85,6 +85,7 @@
     width: 90%; /* Take up the majority of the space */
     overflow-y: auto; /* If the content overflows, let it scroll */
     margin-right: 4%; /* Spacing between content and scrollbar */
+    height: 100%;
 }
 </style>
   
