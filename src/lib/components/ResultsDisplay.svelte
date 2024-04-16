@@ -10,7 +10,8 @@
     <div class="top-container">
         <div class="song-info">
             <div class="albumArtContainer">
-                <img src={imageUrl} class="album-art" alt="album art">
+                <!-- <img src={imageUrl} class="album-art" alt="album art"> -->
+                <img src={"carti.jpg"} class="album-art" alt="album art">
             </div>
             <div class="song-info-text-container">
                 <div class="song-title">{songTitle}</div>
