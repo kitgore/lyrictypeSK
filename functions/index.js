@@ -91,16 +91,31 @@
 const functions = require('firebase-functions');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const fs = require('fs');
+const path = require('path');
+
 
 async function getGeniusSongLyrics(artist_name) {
     // Search for songs by the artist using the Genius API
     const searchUrl = "https://api.genius.com/search";
-    const geniusApiKey = functions.config().genius.key;
+    let geniusApiKey = functions.config().genius ? functions.config().genius.key : null;
+
+    // Fallback to local config if the Firebase config is null
+    if (!geniusApiKey) {
+        try {
+            const localConfigPath = path.join(__dirname, 'local-config.json');
+            const localConfig = JSON.parse(fs.readFileSync(localConfigPath, 'utf8'));
+            geniusApiKey = localConfig.genius.key;
+        } catch (error) {
+            console.error('Error loading local config:', error);
+            throw new Error('API key not found. Please configure your API key.');
+        }
+    }
     const headers = {
         "Authorization": geniusApiKey
     };
+     
     const params = new URLSearchParams({ q: artist_name });
-
     const response = await fetch(`${searchUrl}?${params}`, { headers });
     const data = await response.json();
     const songs = data.response.hits;
@@ -113,8 +128,8 @@ async function getGeniusSongLyrics(artist_name) {
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
     const songTitle = randomSong.result.title;
     const songUrl = randomSong.result.url;
-
-    let lyrics = '';
+    const songArt = randomSong.result.song_art_image_url;
+    const songArtist = randomSong.result.artist_names;
 
     try {
         // Fetch the song page
@@ -174,8 +189,8 @@ async function getGeniusSongLyrics(artist_name) {
     
         // Use selectedLines instead of the full lyrics
         lyrics = selectedLines;
-        // console.log(lyrics)
-        return { songTitle, lyrics };
+        console.log(lyrics)
+        return { songTitle, lyrics, songArtist, songArt };
         
     } catch (error) {
         console.error("Error navigating to song URL:", error);
@@ -186,12 +201,12 @@ async function getGeniusSongLyrics(artist_name) {
 exports.searchArtistAndFetchLyrics = functions.https.onCall(async (data, context) => {
     const { artistName } = data;
     try {
-        const { songTitle, lyrics } = await getGeniusSongLyrics(artistName);
+        const { songTitle, lyrics, songArtist, songArt } = await getGeniusSongLyrics(artistName);
         return {
             title: songTitle,
-            artist: artistName,
+            artist: songArtist,
             lyrics: lyrics,
-            image: null 
+            image: songArt
         };
     } catch (error) {
         console.error("Error fetching artist lyrics:", error);

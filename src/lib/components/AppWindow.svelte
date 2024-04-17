@@ -31,6 +31,7 @@
     flex-direction: column;
     height: 78vh; /* Full height of the viewport */
     width: 80%; /* Assuming the container should span the entire width */
+    background-color: white;
 }
 
 .title-bar {

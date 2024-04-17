@@ -3,6 +3,7 @@
     import app from '$lib/services/initFirebase';
     import AppWindow from '$lib/components/AppWindow.svelte';
   import TypingTest from '../lib/components/TypingTest.svelte';
+  import Background from '../lib/components/Background.svelte';
 
 
 
@@ -23,10 +24,12 @@
 
 </script>
 
-<h1>WELCOME TO LYRICTYPE</h1>
+<Background></Background>
 
-
-
+<br>
+<br>
+<br>
+<br>
 <!-- Display the lyrics -->
 <AppWindow>
     <TypingTest></TypingTest>
