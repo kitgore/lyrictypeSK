@@ -1,11 +1,52 @@
 <script>
     export let title = 'Media Typer'; // Default title
+    export let position = { x: 0, y: 0 }; // Default position
+    export let onClose;
     import CustomScrollbar from './CustomScrollbar.svelte';
     let contentElement; // Reference to the scrollable content
+    let isDragging = false;
+    let startPos = { x: 0, y: 0 };
+    let originalPos = { x: 0, y: 0 };
+    let appWindow;
+
+    // Start dragging
+    function onDragStart(event) {
+        isDragging = true;
+        startPos = {
+            x: event.clientX,
+            y: event.clientY,
+        };
+        originalPos = {
+            x: appWindow.offsetLeft,
+            y: appWindow.offsetTop,
+        };
+        window.addEventListener('mousemove', onDrag);
+        window.addEventListener('mouseup', onDragEnd);
+    }
+
+    // While dragging
+    function onDrag(event) {
+        if (!isDragging) return;
+        const currentPos = {
+            x: event.clientX - startPos.x + originalPos.x,
+            y: event.clientY - startPos.y + originalPos.y,
+        };
+        appWindow.style.left = `${currentPos.x}px`;
+        appWindow.style.top = `${currentPos.y}px`;
+    }
+
+    // Stop dragging
+    function onDragEnd() {
+        isDragging = false;
+        window.removeEventListener('mousemove', onDrag);
+        window.removeEventListener('mouseup', onDragEnd);
+    }
 </script>
   
-<div class="app-window">
-<div class="title-bar">
+<div class="app-window" bind:this={appWindow}
+    style="top: {position.y}vh; left: {position.x}vw;">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div class="title-bar" on:mousedown={onDragStart}>
     <div class="lines-container">
     <div class="line"></div>
     <div class="line"></div>
@@ -15,6 +56,7 @@
     <div class="line"></div>
     </div>
     <div class="title-text">{title}</div>
+    <button class="close-button" on:click={onClose}></button>
 </div>
     <div class="window-content" bind:this={contentElement}>
         <div class="content-area">
@@ -27,6 +69,7 @@
 </div>
 <style>
 .app-window {
+    position: absolute;
     display: flex;
     flex-direction: column;
     height: 78vh; /* Full height of the viewport */
@@ -72,6 +115,26 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 3vh; /* Font size scales with the height */
+    user-select: none;;
+}
+
+.close-button {
+    position: absolute;
+    right: 1.5vw; /* Offset from the right edge */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+    width: 2.6vh; /* Width of the close button */
+    height: 2.6vh; /* Height of the close button */
+    background-color: white; /* White background */
+    border: 2px solid black; /* Black border */
+    font-size: 1.5vh; /* Button text size */
+    color: black; /* Button text color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; /* Cursor on hover */
+    outline: none; /* Remove outline */
+    padding: 0; /* Remove padding */
 }
 
 .window-content {

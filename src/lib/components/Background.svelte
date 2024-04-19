@@ -13,8 +13,8 @@
 
 <style>
     .icon{
-        height: 2.8vh;
-        width: 2.8vh;
+        height: 1.4em;
+        width: 1.4em;
         margin-right: 1%;
     }
     .hotbar {
@@ -22,11 +22,13 @@
         top: 0;
         left: 0;
         width: 100vw;
-        height: 4vh;
+        height: 2em;
         background-color: #ffffff;
         z-index: 2;
-        font-size: 2vh;
-        font-weight: bold;
+        font-size: 1em;
+        font-weight: 500;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
         padding-left: 1.5%;
 
         display: flex;
