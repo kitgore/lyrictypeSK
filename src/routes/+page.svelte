@@ -6,6 +6,7 @@
     import Background from '../lib/components/Background.svelte';
     import DesktopIcon from '../lib/components/DesktopIcon.svelte';
     import AboutDisplay from '../lib/components/AboutDisplay.svelte';
+    import SettingsDisplay from '../lib/components/SettingsDisplay.svelte';
 
     onMount(async () => {
         if (typeof window !== 'undefined') {
@@ -24,6 +25,7 @@
     let windows = [
     { id: 'typingTestWindow', title: 'Media Typer', isOpen: false, component: TypingTest, position: { x: 10, y: 10 } },
     { id: 'aboutDisplayWindow', title: 'About Us', isOpen: false, component: AboutDisplay, position: { x: 10, y: 10 } },
+    { id: 'settingsWindow', title: 'Settings', isOpen: false, component: SettingsDisplay, position: { x: 10, y: 10 } }
 ];
 
     function closeWindow(id) {
@@ -60,13 +62,18 @@
             <path d="M7 4h10a2 2 0 0 1 2 2v2H5V6a2 2 0 0 1 2-2z" />
         </svg>
 </DesktopIcon>
-<DesktopIcon label="About Us" onClick={() => openWindow('aboutDisplayWindow')} position={ {x: 92, y: 43} }>
+<DesktopIcon label="About Us" onClick={() => openWindow('aboutDisplayWindow')} position={ {x: 92, y: 31.33} }>
     <svg slot="icon" width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="0.7" stroke-linecap="square" stroke-linejoin="round" style="margin: auto; display: block;">
         <circle cx="11" cy="11" r="7"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
     </svg>
 </DesktopIcon>
-
+<DesktopIcon label="Settings" onClick={() => openWindow('settingsWindow')} position={ {x: 92, y: 54.66} }>
+    <svg slot="icon" width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: auto; display: block;">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06 .06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V22a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06c.26.26.61.41.98.46a1.65 1.65 0 0 0 1.82-.33 1.65 1.65 0 0 0 .33-1.82V2a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09c.39.07.73.31 1 .66.26.26.41.61.46.98a1.65 1.65 0 0 0 .33 1.82 1.65 1.65 0 0 0 1.82.33H22a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.82-.33"></path>
+    </svg>
+</DesktopIcon>
 {#each windows as window (window.id)}
     {#if window.isOpen}
         <AppWindow title={window.title} position={window.position} onClose={() => closeWindow(window.id)}>
