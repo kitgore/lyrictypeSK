@@ -12,6 +12,7 @@
     let lyrics = '';
     let blink = false;
     let inputElement;
+    let previousArtists = [];
 
     let recentlyPlayed = [
         { name: 'Playboi Carti', imageUrl: '/path/to/playboi-carti-image.svg' },
