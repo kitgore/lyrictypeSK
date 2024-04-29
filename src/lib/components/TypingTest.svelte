@@ -9,6 +9,8 @@
     let songTitle = '';
     let artistName = '';
     let imageUrl = '';
+    let primaryArtist = '';
+    let artistImg = '';
     let lyrics = '';
     let blink = false;
     let inputElement;
@@ -31,7 +33,9 @@
                 songTitle = data.title;
                 artistName = data.artist;
                 imageUrl = data.image;
-                recentlyPlayed = [...recentlyPlayed, { name: artistName, imageUrl: imageUrl }];
+                primaryArtist = data.primaryArtist;
+                artistImg = data.artistImg;
+                recentlyPlayed = [{ name: primaryArtist, imageUrl: artistImg }, ...recentlyPlayed];
 
             } else {
                 lyrics = "Lyrics not found."; // Fallback message

@@ -18,7 +18,7 @@
     .artist-button {
         border: 2px solid black;
         border-radius: 1em; /* Rounded corners */
-        height: calc(100% / 9 - 10px); /* Divide the space evenly among 9 items, accounting for the gap */
+        height: calc(95% / 9 - 10px); /* Divide the space evenly among 9 items, accounting for the gap */
         display: flex;
         align-items: center;
         justify-content: left;

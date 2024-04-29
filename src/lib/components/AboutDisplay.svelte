@@ -50,7 +50,7 @@
 <style>
     /* Style the system information container */
     .page-container {
-        font-size: 1.5em;
+        font-size: .9em;
         height: 80%;
         width: 90%;
         display: flex;

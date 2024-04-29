@@ -124,13 +124,17 @@ async function getGeniusSongLyrics(artist_name) {
         return { songTitle: "No songs found.", lyrics: "" };
     }
 
+    
     // Randomly select a song
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
     const songTitle = randomSong.result.title;
     const songUrl = randomSong.result.url;
     const songArt = randomSong.result.song_art_image_url;
     const songArtist = randomSong.result.artist_names;
-
+    const primaryArtist = randomSong.result.primary_artist.name;
+    const artistImg = randomSong.result.primary_artist.image_url;
+    // console.log(randomSong.result)
+    
     try {
         // Fetch the song page
         const songPageResponse = await fetch(songUrl);
@@ -193,7 +197,7 @@ async function getGeniusSongLyrics(artist_name) {
         // Use selectedLines instead of the full lyrics
         lyrics = selectedLines;
         //console.log(lyrics)
-        return { songTitle, lyrics, songArtist, songArt };
+        return { songTitle, lyrics, songArtist, songArt, primaryArtist, artistImg };
 
     } catch (error) {
         console.error("Error navigating to song URL:", error);
@@ -204,12 +208,14 @@ async function getGeniusSongLyrics(artist_name) {
 exports.searchArtistAndFetchLyrics = functions.https.onCall(async (data, context) => {
     const { artistName } = data;
     try {
-        const { songTitle, lyrics, songArtist, songArt } = await getGeniusSongLyrics(artistName);
+        const { songTitle, lyrics, songArtist, songArt, primaryArtist, artistImg } = await getGeniusSongLyrics(artistName);
         return {
             title: songTitle,
             artist: songArtist,
             lyrics: lyrics,
-            image: songArt
+            image: songArt,
+            primaryArtist: primaryArtist,
+            artistImg: artistImg
         };
     } catch (error) {
         console.error("Error fetching artist lyrics:", error);
@@ -218,5 +224,5 @@ exports.searchArtistAndFetchLyrics = functions.https.onCall(async (data, context
 });
 
 
-//console.log(getGeniusSongLyrics("Arctic Monkeys"));
+console.log(getGeniusSongLyrics("Arctic Monkeys"));
 //searchArtistAndFetchLyrics({data: {artistName: "playboi carti"}}).then(result => console.log(result));
