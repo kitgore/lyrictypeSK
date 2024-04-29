@@ -56,7 +56,7 @@
     <div class="line"></div>
     </div>
     <div class="title-text">{title}</div>
-    <button class="close-button" on:click={onClose}></button>
+    <button class="close-button" on:click={onClose}>X</button>
 </div>
     <div class="window-content" bind:this={contentElement}>
         <div class="content-area">
