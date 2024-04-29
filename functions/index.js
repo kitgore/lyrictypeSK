@@ -114,7 +114,7 @@ async function getGeniusSongLyrics(artist_name) {
     const headers = {
         "Authorization": geniusApiKey
     };
-     
+
     const params = new URLSearchParams({ q: artist_name });
     const response = await fetch(`${searchUrl}?${params}`, { headers });
     const data = await response.json();
@@ -135,11 +135,11 @@ async function getGeniusSongLyrics(artist_name) {
         // Fetch the song page
         const songPageResponse = await fetch(songUrl);
         const songPageHtml = await songPageResponse.text();
-    
+
         // Parse the page with cheerio
         const $ = cheerio.load(songPageHtml);
         let lyricsHtml = '';
-    
+
         // Select the container that includes the lyrics and retrieve the HTML
         const lyricsContainer = $('.lyrics, .Lyrics__Container-sc-1ynbvzw-1');
         if (lyricsContainer.length > 0) {
@@ -148,10 +148,10 @@ async function getGeniusSongLyrics(artist_name) {
             lyricsHtml = "Lyrics not found.";  // Fallback text if no container is found
         }
 
-        
+
         // Replace <br> tags with \n to maintain formatting
         let lyrics = lyricsHtml.replace(/<br\s*\/?>/gi, '\n');
-        
+
         // Remove any script or style elements entirely
         lyrics = lyrics.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, '');
         lyrics = lyrics.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, '');
@@ -166,32 +166,35 @@ async function getGeniusSongLyrics(artist_name) {
         lyrics = lyrics.replace(/<\/?(i|b)>/gi, '');  // Remove italic and bold tags
 
         // console.log(lyrics)
-    
+
         // Decode HTML entities
         lyrics = $('<textarea/>').html(lyrics).text();
 
         // Trim the final string to remove any leading/trailing whitespace
         lyrics = lyrics.trim();
-    
+
         // After processing, you can select random lines or use as is
         const lines = lyrics.split('\n');
-    
+
+        // Filter out empty lines and lines with text in square brackets
+        const filteredLines = lines.filter(line => line.trim() !== '' && !line.trim().match(/\[.*?\]/));
+
         // console.log(lines)
 
         // Ensure there are at least four lines to choose from
-        if (lines.length < 4) {
+        if (filteredLines.length < 4) {
             return { songTitle, lyrics }; // Or handle differently if needed
         }
-    
+
         // Choose a random start index, ensuring it allows for four consecutive lines
-        const startIndex = Math.floor(Math.random() * (lines.length - 3));
-        const selectedLines = lines.slice(startIndex, startIndex + 4).join('\n');
-    
+        const startIndex = Math.floor(Math.random() * (filteredLines.length - 3));
+        const selectedLines = filteredLines.slice(startIndex, startIndex + 4).join('\n');
+
         // Use selectedLines instead of the full lyrics
         lyrics = selectedLines;
-        console.log(lyrics)
+        //console.log(lyrics)
         return { songTitle, lyrics, songArtist, songArt };
-        
+
     } catch (error) {
         console.error("Error navigating to song URL:", error);
         throw error;
@@ -215,5 +218,5 @@ exports.searchArtistAndFetchLyrics = functions.https.onCall(async (data, context
 });
 
 
-// console.log(getGeniusSongLyrics("Bladee"));
+//console.log(getGeniusSongLyrics("Arctic Monkeys"));
 //searchArtistAndFetchLyrics({data: {artistName: "playboi carti"}}).then(result => console.log(result));

@@ -2,6 +2,8 @@
     export let title = 'Media Typer'; // Default title
     export let position = { x: 0, y: 0 }; // Default position
     export let onClose;
+    export let dimensions = { width: 80, height: 78}; // Default dimensions
+    export let showScrollbar = true;
     import CustomScrollbar from './CustomScrollbar.svelte';
     let contentElement; // Reference to the scrollable content
     let isDragging = false;
@@ -44,7 +46,7 @@
 </script>
   
 <div class="app-window" bind:this={appWindow}
-    style="top: {position.y}vh; left: {position.x}vw;">
+    style="top: {position.y}vh; left: {position.x}vw; width: {dimensions.width}%; height: {dimensions.height}vh;">
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="title-bar" on:mousedown={onDragStart}>
     <div class="lines-container">
@@ -62,7 +64,7 @@
         <div class="content-area">
             <slot></slot>
         </div>
-        {#if contentElement}
+        {#if contentElement && showScrollbar}
             <CustomScrollbar content={contentElement} />
         {/if}
     </div>
@@ -72,8 +74,6 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    height: 78vh; /* Full height of the viewport */
-    width: 80%; /* Assuming the container should span the entire width */
     background-color: white;
 }
 

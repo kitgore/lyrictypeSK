@@ -11,6 +11,7 @@
     let lyrics = '';
     let blink = false;
     let inputElement;
+    let previousArtists = [];
 
     async function handleArtistInput(event) {
         artistInput = event.target.value; // Update the artist variable with the value from the input field

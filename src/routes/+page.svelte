@@ -7,6 +7,7 @@
     import DesktopIcon from '../lib/components/DesktopIcon.svelte';
     import AboutDisplay from '../lib/components/AboutDisplay.svelte';
     import SettingsDisplay from '../lib/components/SettingsDisplay.svelte';
+    import CustomScrollbar from '../lib/components/CustomScrollbar.svelte';
 
     onMount(async () => {
         if (typeof window !== 'undefined') {
@@ -23,8 +24,8 @@
     });
 
     let windows = [
-    { id: 'typingTestWindow', title: 'Media Typer', isOpen: false, component: TypingTest, position: { x: 10, y: 10 } },
-    { id: 'aboutDisplayWindow', title: 'About Us', isOpen: false, component: AboutDisplay, position: { x: 10, y: 10 } },
+    { id: 'typingTestWindow', title: 'Media Typer', isOpen: false, showScrollbar: true, component: TypingTest, position: { x: 10, y: 10 } },
+    { id: 'aboutDisplayWindow', title: 'System Info', isOpen: false, showScrollbar: false, component: AboutDisplay, position: { x: 30, y: 10 }, dimensions: {width: 37, height: 78} },
     { id: 'settingsWindow', title: 'Settings', isOpen: false, component: SettingsDisplay, position: { x: 10, y: 10 } }
 ];
 
@@ -51,32 +52,18 @@
 <DesktopIcon label="Media Typer" onClick={() => openWindow('typingTestWindow')} position={ {x: 90.5, y: 8} }>
     <svg slot="icon" width="80" height="80" viewBox="0 0 37 46" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect x="1" y="0.5" width="35" height="39" rx="1.5" fill="white" stroke="black"/> <rect x="5" y="4.5" width="27" height="20" rx="1.5" fill="white" stroke="black"/> <rect x="3" y="39.5" width="31" height="6" fill="white" stroke="black"/> <line x1="18.5" y1="31.5" x2="30.5" y2="31.5" stroke="black"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 7H8.5V8H7.5V7ZM7.5 10H8.5V11H7.5V10ZM8.5 13H7.5V14H8.5V13ZM7.5 16H8.5V17H7.5V16ZM8.5 19H7.5V20H8.5V19ZM10.5 7H11.5V8H10.5V7ZM11.5 10H10.5V11H11.5V10ZM10.5 13H11.5V14H10.5V13ZM11.5 16H10.5V17H11.5V16ZM10.5 19H11.5V20H10.5V19ZM14.5 7H13.5V8H14.5V7ZM13.5 10H14.5V11H13.5V10ZM14.5 19H13.5V20H14.5V19ZM16.5 7H17.5V8H16.5V7ZM17.5 10H16.5V11H17.5V10ZM19.5 7H20.5V8H19.5V7ZM23.5 7H22.5V8H23.5V7Z" fill="black"/>
 </DesktopIcon>
-<DesktopIcon label="Trash" position={ {x: 92, y: 78} }>
-        <svg slot="icon" width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="0.7" stroke-linecap="square" stroke-linejoin="round" style="margin: auto; display: block;">
-            <polyline points="9 6 12 6 15 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m4 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path>
-            <line x1="9" y1="11" x2="9" y2="17"></line>
-            <line x1="11" y1="11" x2="11" y2="17"></line>
-            <line x1="13" y1="11" x2="13" y2="17"></line>
-            <line x1="15" y1="11" x2="15" y2="17"></line>
-            <path d="M7 4h10a2 2 0 0 1 2 2v2H5V6a2 2 0 0 1 2-2z" />
-        </svg>
+<DesktopIcon label="System Info" onClick={() => openWindow('aboutDisplayWindow')} position={ {x: 90.5, y: 28} }>
+    <svg slot="icon" width="80" height="80" viewBox="0 0 54 56" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter0_d_116_279)"><path d="M26.4524 1L5.5 23.2581L27.8492 47L48.8016 24.7419L26.4524 1Z" fill="white"/><path d="M26.4524 1L5.5 23.2581L27.8492 47L48.8016 24.7419L26.4524 1Z" stroke="black"/></g><path d="M38.3254 21.7742L45.3095 29.1935V38.0968H42.5158V36.6129H32.0397L30.6428 35.129H29.246L25.0555 30.6774V29.1935L26.4524 27.7097V26.2258L30.6428 21.7742H38.3254Z" fill="white"/><path d="M26.4524 27.7097V26.2258L30.6428 21.7742H38.3254L45.3095 29.1935V38.0968H42.5158V36.6129H32.0397L30.6428 35.129H29.246L25.0555 30.6774V29.1935M26.4524 27.7097H29.246M26.4524 27.7097L25.0555 29.1935M29.246 27.7097L30.6428 26.2258H32.0397L33.4365 27.7097V29.1935M29.246 27.7097V29.1935L30.6428 30.6774H32.0397L33.4365 29.1935M33.4365 29.1935H39.7222M25.0555 29.1935H20.8651" stroke="black"/><rect x="45.3095" y="28.4516" width="4.19048" height="11.871" fill="black"/><rect x="29.246" y="28.4516" width="4.19048" height="1.48387" fill="black"/><defs><filter id="filter0_d_116_279" x="0.813293" y="0.270531" width="52.675" height="55.4589" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="4"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_116_279"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_116_279" result="shape"/></filter></defs></svg>
 </DesktopIcon>
-<DesktopIcon label="About Us" onClick={() => openWindow('aboutDisplayWindow')} position={ {x: 92, y: 31.33} }>
-    <svg slot="icon" width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="0.7" stroke-linecap="square" stroke-linejoin="round" style="margin: auto; display: block;">
-        <circle cx="11" cy="11" r="7"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
+<DesktopIcon label="Settings" position={ {x: 91, y: 48} }>
+    <svg slot="icon" width="80" height="80" viewBox="0 0 47 47" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 46.3475H44C45.1046 46.3475 46 45.4521 46 44.3475V8.23414C46 7.77527 45.8422 7.33034 45.5531 6.97401L41.3062 1.73986C40.9264 1.27182 40.3559 1 39.7531 1H3C1.89543 1 1 1.89543 1 3V44.3475C1 45.4521 1.89543 46.3475 3 46.3475Z" fill="white" stroke="black"/><path d="M7.0882 47V29.7518C7.0882 28.6472 7.98363 27.7518 9.0882 27.7518H38.4411C39.5457 27.7518 40.4411 28.6472 40.4411 29.7518V47" stroke="black"/><path d="M34.6176 1L34.6176 14.0071C34.6176 15.1117 33.7222 16.0071 32.6176 16.0071L13.3235 16.0071C12.2189 16.0071 11.3235 15.1117 11.3235 14.0071L11.3235 1.00001" stroke="black"/><rect x="24" y="4.10992" width="5.88235" height="8.78723" rx="1.5" fill="white" stroke="black"/></svg>
 </DesktopIcon>
-<DesktopIcon label="Settings" onClick={() => openWindow('settingsWindow')} position={ {x: 92, y: 54.66} }>
-    <svg slot="icon" width="80" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: auto; display: block;">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06 .06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V22a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06c.26.26.61.41.98.46a1.65 1.65 0 0 0 1.82-.33 1.65 1.65 0 0 0 .33-1.82V2a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09c.39.07.73.31 1 .66.26.26.41.61.46.98a1.65 1.65 0 0 0 .33 1.82 1.65 1.65 0 0 0 1.82.33H22a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.82-.33"></path>
-    </svg>
+<DesktopIcon label="Trash" position={ {x: 91, y: 68} }>
+    <svg slot="icon" width="80" height="80" viewBox="0 0 32 46" fill="none" xmlns="http://www.w3.org/2000/svg">    <rect x="12.5" y="0.5" width="8" height="1.93617" fill="white" stroke="black"/>    <rect x="0.5" y="2.45744" width="31" height="2.91489" fill="white" stroke="black"/>    <path d="M1.5 5.39362H30.5V44C30.5 44.8284 29.8284 45.5 29 45.5H3C2.17157 45.5 1.5 44.8284 1.5 44V5.39362Z" fill="white" stroke="black"/>    <path d="M6 9.78723L6.89893 10.667C7.28334 11.0433 7.5 11.5585 7.5 12.0964V39.0445C7.5 39.7203 7.1588 40.3503 6.5929 40.7195L6 41.1064" stroke="black"/>    <path d="M12 9.78723L12.8989 10.667C13.2833 11.0433 13.5 11.5585 13.5 12.0964V39.0445C13.5 39.7203 13.1588 40.3503 12.5929 40.7195L12 41.1064" stroke="black"/>    <path d="M18 9.78723L18.8989 10.667C19.2833 11.0433 19.5 11.5585 19.5 12.0964V39.0445C19.5 39.7203 19.1588 40.3503 18.5929 40.7195L18 41.1064" stroke="black"/>    <path d="M24 9.78723L24.8989 10.667C25.2833 11.0433 25.5 11.5585 25.5 12.0964V39.0445C25.5 39.7203 25.1588 40.3503 24.5929 40.7195L24 41.1064" stroke="black"/></svg>    
 </DesktopIcon>
 {#each windows as window (window.id)}
     {#if window.isOpen}
-        <AppWindow title={window.title} position={window.position} onClose={() => closeWindow(window.id)}>
+        <AppWindow title={window.title} showScrollbar={window.showScrollbar} position={window.position} dimensions={window.dimensions} onClose={() => closeWindow(window.id)}>
             <svelte:component this={window.component} />
         </AppWindow>
     {/if}
