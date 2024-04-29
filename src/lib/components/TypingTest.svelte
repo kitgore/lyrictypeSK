@@ -13,13 +13,7 @@
     let blink = false;
     let inputElement;
 
-    let recentlyPlayed = [
-        { name: 'Playboi Carti', imageUrl: '/path/to/playboi-carti-image.svg' },
-        { name: 'Frank Ocean', imageUrl: '/path/to/frank-ocean-image.svg' },
-        { name: 'Bladee', imageUrl: '/path/to/bladee-image.svg' },
-        { name: 'Charli XCX', imageUrl: '/path/to/charli-xcx-image.svg' },
-        // Add more artists as needed
-    ];
+    let recentlyPlayed = [];
 
     async function handleArtistInput(event) {
         artistInput = event.target.value; // Update the artist variable with the value from the input field
@@ -36,6 +30,8 @@
                 songTitle = data.title;
                 artistName = data.artist;
                 imageUrl = data.image;
+                recentlyPlayed = [...recentlyPlayed, { name: artistName, imageUrl: imageUrl }];
+
             } else {
                 lyrics = "Lyrics not found."; // Fallback message
             }
@@ -55,27 +51,24 @@
     }
 
     onMount(() => {
-        focusInput();N
+        focusInput();
         inputElement.addEventListener('input', handleArtistInput);
         inputElement.addEventListener('keydown', handleEnter);
         inputElement.addEventListener('blur', blurInput);
     });
 
-    const placeholders = Array(7 - recentlyPlayed.length).fill({ name: null, imageUrl: null });
-    let fullArtistList = recentlyPlayed.concat(placeholders);
+    $: fullArtistList = [...recentlyPlayed, ...Array(7 - recentlyPlayed.length).fill({ name: null, imageUrl: null })];
 </script>
 
 <div class = "appContainer">
     <div class = "upperContainer">
         <div class = "sidebar">
             <h3>Recently Played</h3>
-            <div class="recent-artists">
                 <div class="recent-artists">
                     {#each fullArtistList as artist, index}
-                        <ArtistButton name={artist.name || `Artist ${index + 1}`} imageUrl={artist.imageUrl || '/default-image.svg'} />
+                        <ArtistButton name={artist.name} imageUrl={artist.imageUrl || '/default-image.svg'} />
                     {/each}
                 </div>
-            </div>
         </div>
         <div class = "mainContainer">
             <h2>Playboi Carti</h2>
@@ -137,6 +130,7 @@
         display: flex;
         flex-direction: column;
         padding: 10px;
+        gap: 10px;
     }
 
     h3 {

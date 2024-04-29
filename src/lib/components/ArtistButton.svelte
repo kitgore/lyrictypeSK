@@ -5,10 +5,13 @@
 </script>
 
 <div class="artist-button">
-    <!-- <img src={imageUrl} alt="{name}" class="artist-image" /> -->
-    <!-- <span>{name}</span> -->
-    <div class="artist-placeholder-image"/>
-    <div class="artist-placeholder-text"/>
+    {#if name}
+        <img src={imageUrl} alt={""} class="artist-image"/>
+        <span>{name}</span>
+    {:else}
+        <div class="artist-placeholder-image"></div>
+        <div class="artist-placeholder-text"></div>
+    {/if}
 </div>
 
 <style>
@@ -36,10 +39,11 @@
         border-radius: .5em;
     }
     .artist-image {
-        width: 30px; /* Adjust size as needed */
-        height: 30px; /* Adjust size as needed */
+        width: 2.2em;
+        height: 2.2em;
+        background-color: #ededed;
+        border-radius: 30%;
         margin-right: 10px;
-        border-radius: 50%; /* Make the image round */
     }
     span {
         color: black;
