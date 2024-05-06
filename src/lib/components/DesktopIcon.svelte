@@ -22,13 +22,13 @@
         cursor: pointer;
     }
     .icon-label {
-        background-color: white; /* White background for the label */
-        color: black; /* Black text color */
+        background-color: white; 
+        color: black; 
         text-align: center;
-        padding: 2px 3px; /* Some padding around the text */
-        margin-top: 8px; /* Space between the icon and the label */
-        border: 1px solid black; /* Border as per your design */
-        width: max-content; /* Ensure the background only covers the text width */
+        padding: 2px 3px; 
+        margin-top: 8px; 
+        border: 1px solid black;
+        width: max-content;
         font-size: 1em;
     }
 </style>

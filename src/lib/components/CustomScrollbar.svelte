@@ -62,14 +62,14 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-between; /* Adjusts spacing between children */
-        height: 80%; /* Subtracting the 5% padding from top and bottom */
-        width: var(--scrollbar-width); /* Width is set via JavaScript */
-        margin: 3% 0; /* 5% margin from top and bottom */
+        justify-content: space-between;
+        height: 80%;
+        width: var(--scrollbar-width);
+        margin: 3% 0;
     }
   
     .scroll-arrow {
-        width: 100%; /* Full width of the scrollbar container */
+        width: 100%;
         border: 2px solid black;
         background-color: white;
         aspect-ratio: 1; /* Makes the button square */
@@ -86,11 +86,11 @@
       background-color: white;
       border: 2px solid black;
       flex-grow: 1; /* Take up remaining space */
-      margin: 70% 0; /* Margin from the buttons */
+      margin: 70% 0;
     }
 
     .scroll-arrow svg {
-        width: 80%; /* Adjust based on your design preference for arrow size */
+        width: 80%;
         height: auto; /* Maintain aspect ratio of SVG */
     }
     

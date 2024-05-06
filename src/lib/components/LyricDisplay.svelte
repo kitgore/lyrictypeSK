@@ -45,12 +45,11 @@
   function endTest() {
     endTime = new Date();
     const durationInMinutes = (endTime - startTime) / 60000;
-    const charactersTyped = userInput.length; // Use userInput length instead
+    const charactersTyped = userInput.length;
     wpm = (charactersTyped / 5) / durationInMinutes;
 
-    // Make sure to calculate accuracy after the entire userInput is processed
     const incorrectChars = formattedLyrics.reduce((acc, { class: charClass }) => acc + (charClass === 'incorrect' ? 1 : 0), 0);
-    accuracy = ((charactersTyped - incorrectChars) / lyrics.length) * 100; // Ensure to divide by total lyrics length for accuracy
+    accuracy = ((charactersTyped - incorrectChars) / lyrics.length) * 100;
     showResults = true;
 
     console.log(`WPM: ${wpm.toFixed(2)}, Accuracy: ${accuracy.toFixed(2)}%`);
@@ -63,7 +62,6 @@
     testStarted = false;
   };
 
-  // Reactive statement to update formattedLyrics based on lyrics
   $: formattedLyrics = lyrics.split('').map((char, index) => {
     return { char, class: '' };
   });
@@ -72,7 +70,7 @@
   $: {
     if (userInput && formattedLyrics.length > 0) {
       if (!testStarted) startTest();
-      if (userInput.length === lyrics.length) endTest(); // Assuming completion is based on length match
+      if (userInput.length === lyrics.length) endTest();
       
       // Normalize userInput by collapsing multiple spaces and leaving single spaces intact.
       const normalizedUserInput = userInput.replace(/ +/g, ' ');
@@ -134,7 +132,6 @@
     white-space: pre-wrap;
     margin-top: 20px;
     padding: 10px;
-    /* background-color: #f0f0f0; */
     border-radius: 8px;
     letter-spacing: -.18em;
     font-family: "Geneva", sans-serif;
@@ -158,20 +155,17 @@
   }
 
   .blinking-cursor {
-    /* Ensure minimal layout impact */
     display: inline-block;
-    width: 2px; /* Adjust based on the desired cursor thickness */
-    height: 1.2em; /* Typically, matching the line height of the text */
-    margin: 0; /* Ensure no additional space is added around the cursor */
+    width: 2px; 
+    height: 1.2em;
+    margin: 0;
     margin-right: -6px;
     margin-left: 4px;
-    vertical-align: text-bottom; /* Aligns the cursor better with the baseline of the text */
-    background-color: currentColor; /* Inherits the text color; adjust if a different cursor color is preferred */
-    /* Blink animation */
+    vertical-align: text-bottom;
+    background-color: currentColor;
     animation: blink-animation 1s steps(1) infinite;
   }
   .cursor-placeholder {
-    /* Ensure this does not introduce additional spacing */
     width: 0;
     margin: 0;
     padding: 0;

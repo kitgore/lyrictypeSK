@@ -11,7 +11,6 @@
     let originalPos = { x: 0, y: 0 };
     let appWindow;
 
-    // Start dragging
     function onDragStart(event) {
         isDragging = true;
         startPos = {
@@ -26,7 +25,6 @@
         window.addEventListener('mouseup', onDragEnd);
     }
 
-    // While dragging
     function onDrag(event) {
         if (!isDragging) return;
         const currentPos = {
@@ -37,7 +35,6 @@
         appWindow.style.top = `${currentPos.y}px`;
     }
 
-    // Stop dragging
     function onDragEnd() {
         isDragging = false;
         window.removeEventListener('mousemove', onDrag);
@@ -58,7 +55,7 @@
     <div class="line"></div>
     </div>
     <div class="title-text">{title}</div>
-    <button class="close-button" on:click={onClose}>X</button>
+    <button class="close-button" on:click={onClose}></button>
 </div>
     <div class="window-content" bind:this={contentElement}>
         <div class="content-area">
@@ -85,8 +82,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Use viewport height (vh) unit to define the height relative to the viewport */
-    height: 4vh; /* Adjust this value as needed */
+    height: 4vh;
 }
 
 .lines-container {
@@ -109,46 +105,46 @@
 
 .title-text {
     background-color: white;
-    padding: 0 .5vw; /* Using viewport width to keep horizontal padding consistent */
+    padding: 0 .5vw;
     z-index: 1;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 3vh; /* Font size scales with the height */
+    font-size: 3vh;
     user-select: none;;
 }
 
 .close-button {
     position: absolute;
-    right: 1.5vw; /* Offset from the right edge */
-    top: 50%; /* Center vertically */
+    right: 1.5vw;
+    top: 50%;
     transform: translateY(-50%);
-    width: 2.6vh; /* Width of the close button */
-    height: 2.6vh; /* Height of the close button */
-    background-color: white; /* White background */
-    border: 2px solid black; /* Black border */
-    font-size: 1.5vh; /* Button text size */
-    color: black; /* Button text color */
+    width: 2.6vh; 
+    height: 2.6vh;
+    background-color: white;
+    border: 2px solid black;
+    font-size: 1.5vh;
+    color: black;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer; /* Cursor on hover */
-    outline: none; /* Remove outline */
-    padding: 0; /* Remove padding */
+    cursor: pointer;
+    outline: none;
+    padding: 0;
 }
 
 .window-content {
     display: flex;
     flex-direction: row;
-    flex-grow: 1; /* This will make the content fill the rest of the window container's height */
+    flex-grow: 1;
     border: 2px solid black;
-    border-top: none; /* Assuming you want a continuous border without double lines */
+    border-top: none;
 }
 
 .content-area {
-    width: 90%; /* Take up the majority of the space */
-    overflow-y: auto; /* If the content overflows, let it scroll */
-    margin-right: 4%; /* Spacing between content and scrollbar */
+    width: 90%;
+    overflow-y: auto;
+    margin-right: 4%;
     height: 100%;
 }
 </style>

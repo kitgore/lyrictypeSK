@@ -4,7 +4,6 @@
     export let type = 'text';
     export let value = '';
   
-    // You can add an event dispatcher if you need to handle events like on:keypress externally
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
   </script>

@@ -76,17 +76,17 @@
     .button-container {
         display: flex;
         justify-content: space-around; /* Space out the buttons evenly */
-        width: 100%; /* Set the width to take the full container width */
-        padding: 1em; /* Add some padding around the buttons */
+        width: 100%; 
+        padding: 1em; 
     }
 
     .control-button {
-        font-size: 2em; /* Adjust the size of the icons in the buttons */
-        padding: 0.5em 1em; /* Padding inside the buttons */
-        margin: 0 0.5em; /* Margin between the buttons */
-        border: 2px solid black; /* Border for buttons */
-        background-color: white; /* Button background color */
-        cursor: pointer; /* Cursor to indicate button */
+        font-size: 2em; 
+        padding: 0.5em 1em;
+        margin: 0 0.5em;
+        border: 2px solid black; 
+        background-color: white; 
+        cursor: pointer; 
         border-radius: 10px;
         height: 100%;
         width: 13%;
