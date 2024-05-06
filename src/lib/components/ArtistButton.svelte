@@ -4,10 +4,12 @@
     
 </script>
 
+<!-- Structure for displaying artist information -->
 <div class="artist-button">
     {#if name}
         <img src={imageUrl} alt={""} class="artist-image"/>
         <span>{name}</span>
+    <!-- Placeholder displayed if image is not defined -->
     {:else}
         <div class="artist-placeholder-image"></div>
         <div class="artist-placeholder-text"></div>
