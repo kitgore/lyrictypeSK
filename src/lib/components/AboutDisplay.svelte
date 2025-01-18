@@ -30,8 +30,10 @@
                     </div>
                     <p>Registered Users:</p>
                     <div class="registered-info">
+                        /* Registered Users*/
                         <p>kitgore</p>
                         <p>noschwa</p>
+                        <p>elleneg</p>
                         <br>
                     </div>
                     <p>Computer:</p>
@@ -48,6 +50,7 @@
     </div>
 
 <style>
+    /* Style the system information container */
     .page-container {
         font-size: .9em;
         height: 80%;
@@ -62,6 +65,8 @@
     .system-info {
         text-indent: 5em;
     }
+
+    /* Style the body */
     .body {
         text-indent: 3em;
         text-align: left;
@@ -73,6 +78,7 @@
         text-decoration: underline;
     }
 
+    /* Style the information items */
     .items {
         margin-bottom: 0.5rem;
         width: 45%;
