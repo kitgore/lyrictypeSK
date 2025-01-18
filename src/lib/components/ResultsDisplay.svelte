@@ -21,7 +21,7 @@
             <p class="statTitle">wpm:</p>
             <p class="stat">{wpm.toFixed(1)}</p>
             <p class="statTitle">acc:</p>
-            <p class="stat">{accuracy.toFixed(1)}%</p>
+            <p class="stat">{accuracy === 100 ? "100%" : accuracy.toFixed(1) + "%"}</p>
         </div>
     </div>
     <div class="bottom-container">
@@ -65,6 +65,8 @@
         flex-direction: row;
         width: 100%;
         height: 75%;
+        margin-top: 3%;
+        margin-bottom: -3%;
     }
     .bottom-container{
         display: flex;
@@ -72,18 +74,20 @@
         justify-content: center;
         width: 100%;
         height: 25%;
+        /* align-items: center; */
     }
     .button-container {
         display: flex;
         justify-content: space-around; /* Space out the buttons evenly */
-        width: 100%; 
-        padding: 1em; 
+        width: 100%;
+        height: 75%; 
+        /* padding: 1em;  */
     }
 
     .control-button {
         font-size: 2em; 
         padding: 0.5em 1em;
-        margin: 0 0.5em;
+        /* margin: 0 0.5em; */
         border: 2px solid black; 
         background-color: white; 
         cursor: pointer; 
@@ -111,7 +115,7 @@
     .song-info{
         display: flex;
         flex-direction: row;
-        padding-top: 8%;
+        /* padding-top: 8%; */
         width: 80%;
         height: 80%;
     }
@@ -124,7 +128,11 @@
     }
     .album-art{
         margin: 0 0;
-        height: 25vh;
+        height: 90%;
+        object-fit: contain;
+        display: block;  /* removes any unwanted space below the image */
+        max-width: 100%;  /* ensures image doesn't overflow */
+        max-height: 100%;
     }
     .song-info-text-container{
         display: flex;
@@ -134,11 +142,14 @@
         display: flex;
         flex-direction: column;
         width: 20%;
-        height: 100%;
+        height: 80%;
+        justify-content: center;
+        margin-top: -1.5%;
     }
     .statTitle{
         font-size: 1.4em;
         margin-bottom: 0;
+        margin-top: 0;
     }
     .stat{
         font-size: 3em;

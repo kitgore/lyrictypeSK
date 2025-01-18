@@ -61,9 +61,11 @@
         <div class="content-area">
             <slot></slot>
         </div>
-        {#if contentElement && showScrollbar}
-            <CustomScrollbar content={contentElement} />
-        {/if}
+        <div class="scrollbar-container">
+            {#if contentElement && showScrollbar}
+                <CustomScrollbar content={contentElement} />
+            {/if}
+        </div>
     </div>
 </div>
 <style>
@@ -142,10 +144,16 @@
 }
 
 .content-area {
-    width: 90%;
+    width: 92%;
     overflow-y: auto;
-    margin-right: 4%;
     height: 100%;
+}
+.scrollbar-container {
+    width: 8%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>
   

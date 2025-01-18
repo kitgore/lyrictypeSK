@@ -63,9 +63,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        height: 80%;
-        width: var(--scrollbar-width);
+        height: 85%;
         margin: 3% 0;
+        margin-bottom: 25%;
     }
   
     .scroll-arrow {
@@ -79,6 +79,7 @@
         align-items: center;
         cursor: pointer;
         user-select: none;
+        border-radius: .2em;
     }
   
     .track {
@@ -87,6 +88,7 @@
       border: 2px solid black;
       flex-grow: 1; /* Take up remaining space */
       margin: 70% 0;
+      border-radius: .2em;
     }
 
     .scroll-arrow svg {

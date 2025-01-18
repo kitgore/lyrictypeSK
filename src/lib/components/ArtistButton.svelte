@@ -18,7 +18,7 @@
     .artist-button {
         border: 2px solid black;
         border-radius: 1em;
-        height: calc(95% / 9 - 10px);
+        height: calc(80% / 9);
         display: flex;
         align-items: center;
         justify-content: left;
@@ -26,26 +26,30 @@
         padding: 5px;
     }
     .artist-placeholder-image{
-        width: 2.2em;
-        height: 2.2em;
+        height: 100%;
+        aspect-ratio: 1/1;
         background-color: #ededed;
-        border-radius: 30%;
+        border-radius: 35%;
         margin-right: 10px;
     }
     .artist-placeholder-text{
-        width: 60%;
-        height: 1.2em;
+        width: 70%;
+        height: 50%;
         background-color: #ededed;
         border-radius: .5em;
     }
     .artist-image {
-        width: 2.2em;
-        height: 2.2em;
-        background-color: #ededed;
-        border-radius: 30%;
+        height: 100%;
+        aspect-ratio: 1/1;
+        border-radius: 35%;
         margin-right: 10px;
+        object-fit: contain;
+        display: block;  /* removes any unwanted space below the image */
+        max-width: 100%;  /* ensures image doesn't overflow */
+        max-height: 100%; 
     }
     span {
         color: black;
+        font-size: 2.3vh;
     }
 </style>

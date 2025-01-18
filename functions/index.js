@@ -43,7 +43,7 @@ async function getGeniusSongLyrics(artist_name) {
     const songArtist = randomSong.result.artist_names;
     const primaryArtist = randomSong.result.primary_artist.name;
     const artistImg = randomSong.result.primary_artist.image_url;
-    // console.log(randomSong.result)
+    console.log(randomSong.result)
     
     try {
         // Fetch the song page
@@ -55,7 +55,7 @@ async function getGeniusSongLyrics(artist_name) {
         let lyricsHtml = '';
 
         // Select the container that includes the lyrics and retrieve the HTML
-        const lyricsContainer = $('.lyrics, .Lyrics__Container-sc-1ynbvzw-1');
+        const lyricsContainer = $('[class^="Lyrics-"]');
         if (lyricsContainer.length > 0) {
             lyricsHtml = lyricsContainer.html();
         } else {
@@ -78,7 +78,7 @@ async function getGeniusSongLyrics(artist_name) {
         lyrics = lyrics.replace(/\[.*?\]/g, '');      // Remove text within square brackets
         lyrics = lyrics.replace(/<\/?(i|b)>/gi, '');  // Remove italic and bold tags
 
-        // console.log(lyrics)
+        console.log(lyrics)
 
         // Decode HTML entities
         lyrics = $('<textarea/>').html(lyrics).text();

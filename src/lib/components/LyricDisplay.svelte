@@ -119,9 +119,9 @@
   {#if cursorPosition === formattedLyrics.length}
     <span class="blinking-cursor"></span>
   {/if}
+  <input bind:this={inputElement} class="quote-input" type="text" bind:value={userInput} />
 </div>
 {/if}
-<input bind:this={inputElement} class="quote-input" type="text" bind:value={userInput} />
 
 
 <style>
@@ -130,12 +130,10 @@
   }
   .quote-display{
     white-space: pre-wrap;
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 1.5%;
     letter-spacing: -.18em;
     font-family: "Geneva", sans-serif;
-    font-size: 1.6em;
+    font-size: 3.2vh;
     line-height: 180%;
     font-weight: 500;
   }
@@ -164,6 +162,8 @@
     vertical-align: text-bottom;
     background-color: currentColor;
     animation: blink-animation 1s steps(1) infinite;
+    transform: translateX(0);
+    transition: transform 100ms ease;
   }
   .cursor-placeholder {
     width: 0;
