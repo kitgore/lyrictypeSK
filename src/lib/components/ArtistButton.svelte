@@ -1,23 +1,24 @@
 <script>
     export let name;
     export let imageUrl;
-    
 </script>
 
-<!-- Structure for displaying artist information -->
-<div class="artist-button">
-    {#if name}
-        <img src={imageUrl} alt={""} class="artist-image"/>
+{#if name}
+    <div class="artist-button">
+        <div class="image-container">
+            <img src={imageUrl} alt={""} class="artist-image"/>
+        </div>
         <span>{name}</span>
-    <!-- Placeholder displayed if image is not defined -->
-    {:else}
+    </div>
+{:else}
+    <div class="artist-button-empty">
         <div class="artist-placeholder-image"></div>
         <div class="artist-placeholder-text"></div>
-    {/if}
-</div>
+    </div>
+{/if}
 
 <style>
-    .artist-button {
+    .artist-button, .artist-button-empty {
         border: 2px solid black;
         border-radius: 1em;
         height: calc(80% / 9);
@@ -27,31 +28,56 @@
         text-align: left;
         padding: 5px;
     }
-    .artist-placeholder-image{
+
+    .artist-button:hover {
+        background-color: #000000;
+    }
+
+    .artist-button:hover span {
+        color: white;
+    }
+
+    .artist-placeholder-image {
         height: 100%;
         aspect-ratio: 1/1;
         background-color: #ededed;
         border-radius: 35%;
         margin-right: 10px;
     }
-    .artist-placeholder-text{
+
+    .image-container {
+        height: 100%;
+        aspect-ratio: 1/1;
+        margin-right: 10px;
+        position: relative;
+    }
+
+    .artist-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 25%;
+        object-fit: cover;
+    }
+
+    .artist-placeholder-text {
         width: 70%;
         height: 50%;
         background-color: #ededed;
         border-radius: .5em;
     }
-    .artist-image {
-        height: 100%;
-        aspect-ratio: 1/1;
-        border-radius: 35%;
-        margin-right: 10px;
-        object-fit: contain;
-        display: block;  /* removes any unwanted space below the image */
-        max-width: 100%;  /* ensures image doesn't overflow */
-        max-height: 100%; 
-    }
+
     span {
         color: black;
         font-size: 2.3vh;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
-</style>
+    </style>

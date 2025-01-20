@@ -17,6 +17,7 @@
 	"type": "module",
 	"dependencies": {
 		"cors": "^2.8.5",
-		"firebase": "^10.8.0"
+		"firebase": "^10.8.0",
+		"textfit": "^2.4.0"
 	}
 }
