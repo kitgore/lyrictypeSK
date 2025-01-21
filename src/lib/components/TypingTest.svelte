@@ -1,9 +1,10 @@
 <script>
-    import { getArtistLyrics } from '$lib/services/artistService';
+    import { getArtistLyrics, searchByArtistId } from '$lib/services/artistService';
     import TextInput from '$lib/components/TextInput.svelte';
     import LyricDisplay from '$lib/components/LyricDisplay.svelte';
     import ArtistButton from './ArtistButton.svelte';
     import { onMount } from 'svelte';
+    import { recentArtists } from '$lib/services/store'
 
     let artistInput = '';
     let songTitle = '';
@@ -12,12 +13,11 @@
     let primaryArtist = '';
     let artistImg = '';
     let lyrics = '';
+    let artistId = '';
+    let songId = '';
     let blink = false;
     let inputElement;
     let displayedArtist = 'Artist';
-    let previousArtists = [];
-
-    let recentlyPlayed = [];
 
     // Set the artist input to whats in the input field
     async function handleArtistInput(event) {
@@ -28,27 +28,63 @@
         if (event.key === 'Enter') {
             blurInput(); // Remove focus from the input field
             event.preventDefault(); // Prevent form submission
-            const data = await getArtistLyrics(artistInput);
+            const data = await getArtistLyrics(artistInput)
+            // const test = await searchByArtistId(1421, [], 2);
             setDisplayFromData(data);
+            // set song queue of current artist
+            prepareQueue(data);
+        }
+    }
+
+    async function prepareQueue(data){
+        const artistId = data.artistId;
+        const seenSongs = $recentArtists.find(artist => artist.artistId === artistId)?.seenSongs || [];
+        const songQueue = await searchByArtistId(artistId, seenSongs, 1);
+        console.log("SONGQUEUE ", songQueue);
+        recentArtists.set([{ name: primaryArtist, imageUrl: artistImg, seenSongs: seenSongs, artistId: artistId, songQueue: songQueue }, 
+            ...$recentArtists.filter(artist => artist.artistId === artistId)]); // Move the artist to the front of the list
+    }
+
+    function continueFromQueue(){
+        playNextFromQueue(artistId);
+        console.log("CONTINUE FROM QUEUE");
+    }
+
+    function playNextFromQueue(artistId){
+        const artist = $recentArtists.find(artist => artist.artistId === artistId);
+        let nextSong
+        console.log("SONGQUEUE:", artist.songQueue);
+        console.log("QUEUE LENGTH:", artist.songQueue);
+        if (Object.keys(artist.songQueue).length > 0){
+            nextSong = artist.songQueue.shift();
+            console.log("NEXT SONG ", nextSong);
+            setDisplayFromData(nextSong);
+            prepareQueue(nextSong);
         }
     }
 
     function setDisplayFromData(data){
         if (data && data.lyrics) {
-                console.log(data)
-                lyrics = data.lyrics;
-                songTitle = data.title;
-                artistName = data.artist;
-                imageUrl = data.image;
-                primaryArtist = data.primaryArtist;
-                artistImg = data.artistImg;
-                recentlyPlayed = [{ name: primaryArtist, imageUrl: artistImg }, 
-                    ...recentlyPlayed.filter(artist => artist.name !== primaryArtist)]; // Move the artist to the front of the list
-                displayedArtist = primaryArtist;
+            console.log(data)
+            lyrics = data.lyrics;
+            songTitle = data.title;
+            artistName = data.artist;
+            imageUrl = data.image;
+            primaryArtist = data.primaryArtist;
+            artistImg = data.artistImg;
+            artistId = data.artistId;
+            songId = data.songId
+            let seenSongs = $recentArtists.find(artist => artist.artistId === artistId)?.seenSongs || [];
+            seenSongs = seenSongs.includes(songId) ? seenSongs : [songId, ...seenSongs]; // Add the song to the list if it's not already there
+            const songQueue = $recentArtists.find(artist => artist.artistId === artistId)?.songQueue || {};
+            recentArtists.set([{ name: primaryArtist, imageUrl: artistImg, seenSongs: seenSongs, artistId: artistId, songQueue: songQueue }, 
+                ...$recentArtists.filter(artist => artist.artistId === artistId)]); // Move the artist to the front of the list
+            displayedArtist = primaryArtist;
 
         } else {
             lyrics = "Lyrics not found.";
         }
+        console.log($recentArtists);
     }
 
     function focusInput() {
@@ -70,7 +106,8 @@
         inputElement.addEventListener('blur', blurInput);
     });
 
-    $: fullArtistList = [...recentlyPlayed, ...Array(7 - recentlyPlayed.length).fill({ name: null, imageUrl: null })];
+    $: fullArtistList = [...$recentArtists, ...Array(7 - $recentArtists.length).fill({ name: null, imageUrl: null })];
+
 </script>
 
 <!-- Updated HTML structure -->
@@ -102,7 +139,8 @@
                         lyrics={lyrics} 
                         songTitle={songTitle} 
                         artistName={artistName} 
-                        imageUrl={imageUrl} />
+                        imageUrl={imageUrl}
+                        continueFromQueue={continueFromQueue} />
                     {/if}
                 </div>
             </div>

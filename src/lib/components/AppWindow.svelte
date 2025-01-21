@@ -5,6 +5,7 @@
     export let dimensions = { width: 80, height: 78}; // Default dimensions
     export let showScrollbar = true;
     import CustomScrollbar from './CustomScrollbar.svelte';
+  import TypingTest from './TypingTest.svelte';
     let contentElement; // Reference to the scrollable content
     let isDragging = false;
     let startPos = { x: 0, y: 0 };

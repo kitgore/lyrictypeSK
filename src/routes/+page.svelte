@@ -23,6 +23,13 @@
         }
     });
 
+    let componentRef; // This will hold the reference to your component instance
+    
+    $: if (componentRef) {
+        const { clientWidth, clientHeight } = componentRef;
+        console.log(clientWidth, clientHeight);
+    }
+
     let windows = [
     { id: 'typingTestWindow', title: 'Media Typer', isOpen: false, showScrollbar: true, component: TypingTest, position: { x: 10, y: 10 } },
     { id: 'aboutDisplayWindow', title: 'System Info', isOpen: false, showScrollbar: false, component: AboutDisplay, position: { x: 30, y: 10 }, dimensions: {width: 37, height: 78} },

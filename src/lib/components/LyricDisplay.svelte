@@ -5,6 +5,7 @@
   export let songTitle;
   export let artistName;
   export let imageUrl;
+  export let continueFromQueue;
   let userInput = '';
   let startTime = null;
   let endTime = null;
@@ -55,12 +56,15 @@
     console.log(`WPM: ${wpm.toFixed(2)}, Accuracy: ${accuracy.toFixed(2)}%`);
   }
 
-  $: if (lyrics){
-    showResults = false;
-    userInput = '';
-    focusInput();
-    testStarted = false;
-  };
+  $: if (lyrics) {
+      // Reset state and focus when lyrics change
+      showResults = false;
+      userInput = '';
+      testStarted = false;
+      setTimeout(() => { // Wait for the DOM to update before focusing the input
+        focusInput();
+      }, 0);
+  }
 
   $: formattedLyrics = lyrics.split('').map((char, index) => {
     return { char, class: '' };
@@ -106,7 +110,7 @@
 </script>
 
 {#if showResults && preloadedImage}
-  <ResultsDisplay {wpm} {accuracy} {songTitle} {artistName} imageUrl={preloadedImage.src} />
+  <ResultsDisplay {wpm} {accuracy} {songTitle} {artistName} imageUrl={preloadedImage.src} continueFromQueue={continueFromQueue} />
 {:else}
 <div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>
   {#each formattedLyrics as { char, class: spanClass }, i}
