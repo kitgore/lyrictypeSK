@@ -29,41 +29,71 @@
             blurInput(); // Remove focus from the input field
             event.preventDefault(); // Prevent form submission
             const data = await getArtistLyrics(artistInput)
+            console.log("HANDLE ENTER DATA:", data);
             // const test = await searchByArtistId(1421, [], 2);
             setDisplayFromData(data);
+            setNewRecentArtist({name: data.initialArtist, imageUrl: data.initialArtistImg, seenSongs: [data.songIndex], artistId: data.initialArtistId, songQueue: {}});
             // set song queue of current artist
-            prepareQueue(data);
+            prepareQueue(data.initialArtistId);
         }
     }
 
-    async function prepareQueue(data){
-        const artistId = data.artistId;
-        const seenSongs = $recentArtists.find(artist => artist.artistId === artistId)?.seenSongs || [];
-        const songQueue = await searchByArtistId(artistId, seenSongs, 1);
-        console.log("SONGQUEUE ", songQueue);
-        recentArtists.set([{ name: primaryArtist, imageUrl: artistImg, seenSongs: seenSongs, artistId: artistId, songQueue: songQueue }, 
-            ...$recentArtists.filter(artist => artist.artistId === artistId)]); // Move the artist to the front of the list
+    function requeueArtist(artistId) {
+        const artist = $recentArtists.find(artist => artist.artistId === artistId);
+        recentArtists.set([artist, ...$recentArtists.filter(artist => artist.artistId !== artistId)]);
+        continueFromQueue();
+        prepareQueue(artistId);
+    }
+
+    async function prepareQueue(artistId) {
+        // Find existing artist to preserve their current data
+        const existingArtist = $recentArtists.find(artist => artist.artistId === artistId);
+        console.log("EXISTING ARTIST", existingArtist)
+        const songQueue = await searchByArtistId(artistId, existingArtist.seenSongs);
+
+        recentArtists.set([
+            { 
+                name: existingArtist.name, 
+                imageUrl: existingArtist.imageUrl, 
+                seenSongs: [...existingArtist.seenSongs, songQueue.songIndex], 
+                artistId: existingArtist.artistId, 
+                songQueue: songQueue 
+            },
+            ...$recentArtists.filter(artist => artist.artistId !== artistId)
+        ]);
+        console.log("RECENT ARTISTS AFTER PREPARE QUEUE", $recentArtists);
     }
 
     function continueFromQueue(){
-        playNextFromQueue(artistId);
+        const currentArtistId = $recentArtists[0].artistId;
+        playNextFromQueue(currentArtistId);
         console.log("CONTINUE FROM QUEUE");
     }
 
-    function playNextFromQueue(artistId){
+    function playNextFromQueue(artistId) {
         const artist = $recentArtists.find(artist => artist.artistId === artistId);
-        let nextSong
-        console.log("SONGQUEUE:", artist.songQueue);
-        console.log("QUEUE LENGTH:", artist.songQueue);
-        if (Object.keys(artist.songQueue).length > 0){
-            nextSong = artist.songQueue.shift();
-            console.log("NEXT SONG ", nextSong);
-            setDisplayFromData(nextSong);
-            prepareQueue(nextSong);
+        console.log("ARTIST AFTER PLAY NEXT", artist, $recentArtists)
+        if (artist && Object.keys(artist.songQueue).length > 0) {
+            console.log("recentArtists", $recentArtists);
+            
+            console.log("NEXT SONG ", artist.songQueue);
+            setDisplayFromData(artist.songQueue);
+            prepareQueue(artistId);
+            
+            return artist.songQueue;
         }
+        
+        return null;
+    }
+
+    function setNewRecentArtist({ name, imageUrl, seenSongs, artistId, songQueue }){
+        recentArtists.set([{ name: name, imageUrl: imageUrl, seenSongs: seenSongs, artistId: artistId, songQueue: songQueue }, 
+        ...$recentArtists.filter(artist => artist.artistId !== artistId)]);
+        displayedArtist = name;
     }
 
     function setDisplayFromData(data){
+        console.log("DISPLAYING DATA:" , data)
         if (data && data.lyrics) {
             console.log(data)
             lyrics = data.lyrics;
@@ -73,13 +103,7 @@
             primaryArtist = data.primaryArtist;
             artistImg = data.artistImg;
             artistId = data.artistId;
-            songId = data.songId
-            let seenSongs = $recentArtists.find(artist => artist.artistId === artistId)?.seenSongs || [];
-            seenSongs = seenSongs.includes(songId) ? seenSongs : [songId, ...seenSongs]; // Add the song to the list if it's not already there
-            const songQueue = $recentArtists.find(artist => artist.artistId === artistId)?.songQueue || {};
-            recentArtists.set([{ name: primaryArtist, imageUrl: artistImg, seenSongs: seenSongs, artistId: artistId, songQueue: songQueue }, 
-                ...$recentArtists.filter(artist => artist.artistId === artistId)]); // Move the artist to the front of the list
-            displayedArtist = primaryArtist;
+            songId = data.songId;
 
         } else {
             lyrics = "Lyrics not found.";
@@ -106,7 +130,7 @@
         inputElement.addEventListener('blur', blurInput);
     });
 
-    $: fullArtistList = [...$recentArtists, ...Array(7 - $recentArtists.length).fill({ name: null, imageUrl: null })];
+    $: fullArtistList = [...$recentArtists, ...Array(7 - $recentArtists.length).fill({ name: null, imageUrl: null, artistId: null })];
 
 </script>
 
@@ -128,7 +152,7 @@
             <div class="sidebar">
                 <div class="artistList">
                     {#each fullArtistList as artist, index}
-                        <ArtistButton name={artist.name} imageUrl={artist.imageUrl || '/default-image.svg'} />
+                        <ArtistButton name={artist.name} imageUrl={artist.imageUrl || '/default-image.svg'} on:click={() => requeueArtist(artist.artistId)} />
                     {/each}
                 </div>
             </div>

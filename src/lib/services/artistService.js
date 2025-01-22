@@ -16,16 +16,16 @@ export async function getArtistLyrics(artistName) {
   }
 
 
-export async function searchByArtistId(artistId, seenSongs, numSongs) {
+export async function searchByArtistId(artistId, seenSongs) {
   const functions = getFunctions(app);
   const callSearch = httpsCallable(functions, 'searchByArtistId');
 
   try {
-    const result = await callSearch({ artistId, seenSongs, numSongs});
+    const result = await callSearch({ artistId, seenSongs });
     console.log(result.data);
     return result.data; // The response from your Firebase Function is accessed via result.data
   } catch (error) {
-    console.error("Error calling getArtistLyrics Firebase Function:", error);
+    console.error("Error calling searchByArtistId Firebase Function:", error);
     throw error; // Rethrow or handle the error as you see fit
   }
 }

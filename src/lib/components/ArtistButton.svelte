@@ -4,7 +4,7 @@
 </script>
 
 {#if name}
-    <div class="artist-button">
+    <div class="artist-button" role="button" on:click  aria-label="Artist Button" on:keydown={console.log("bruh")}>
         <div class="image-container">
             <img src={imageUrl} alt={""} class="artist-image"/>
         </div>
