@@ -5,6 +5,7 @@
     import ArtistButton from './ArtistButton.svelte';
     import { onMount } from 'svelte';
     import { recentArtists } from '$lib/services/store'
+    import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
 
     let artistInput = '';
     let songTitle = '';
@@ -18,6 +19,7 @@
     let blink = false;
     let inputElement;
     let displayedArtist = 'Artist';
+    let loading = false;
 
     // Set the artist input to whats in the input field
     async function handleArtistInput(event) {
@@ -28,11 +30,14 @@
         if (event.key === 'Enter') {
             blurInput(); // Remove focus from the input field
             event.preventDefault(); // Prevent form submission
+            lyrics = '';
+            loading = true;
             const data = await getArtistLyrics(artistInput)
             console.log("HANDLE ENTER DATA:", data);
             // const test = await searchByArtistId(1421, [], 2);
             setDisplayFromData(data);
             setNewRecentArtist({name: data.initialArtist, imageUrl: data.initialArtistImg, seenSongs: [data.songIndex], artistId: data.initialArtistId, songQueue: {}});
+            loading = false; 
             // set song queue of current artist
             prepareQueue(data.initialArtistId);
         }
@@ -165,6 +170,12 @@
                         artistName={artistName} 
                         imageUrl={imageUrl}
                         continueFromQueue={continueFromQueue} />
+                    {:else}
+                        {#if loading}
+                            <div class="loadingAnimationContainer">
+                                <LoadingAnimation className={"loadingAnimation"}/>
+                            </div>
+                        {/if}
                     {/if}
                 </div>
             </div>
@@ -215,6 +226,14 @@
         display: flex;
         flex-direction: row;
         height: 100%;
+    }
+
+    .loadingAnimationContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        /* padding-top: 45%; */
     }
 
     /* Header Section */
@@ -348,6 +367,12 @@
         height: 0;
         width: 0;
         pointer-events: none;
+    }
+
+    /* Loading Animation */
+
+    :global(.loadingAnimation) {
+        transform: scale(3);
     }
 
     /* Typography */

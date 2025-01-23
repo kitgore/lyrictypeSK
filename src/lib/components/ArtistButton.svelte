@@ -4,6 +4,7 @@
 </script>
 
 {#if name}
+    <!-- svelte-ignore a11y-interactive-supports-focus -->
     <div class="artist-button" role="button" on:click  aria-label="Artist Button" on:keydown={console.log("bruh")}>
         <div class="image-container">
             <img src={imageUrl} alt={""} class="artist-image"/>
