@@ -20,7 +20,7 @@
 
 <style>
     .artist-button, .artist-button-empty {
-        border: 2px solid black;
+        border: 2px solid var(--primary-color);
         border-radius: 1em;
         height: calc(80% / 9);
         display: flex;
@@ -31,17 +31,21 @@
     }
 
     .artist-button:hover {
-        background-color: #000000;
+        background-color: var(--primary-color);
     }
 
     .artist-button:hover span {
-        color: white;
+        color: var(--secondary-color);
     }
 
     .artist-placeholder-image {
-        height: 100%;
+        height: calc(100%);
         aspect-ratio: 1/1;
-        background-color: #ededed;
+        /* border: solid 2px var(--primary-color); */
+        background-size: 2px 2px; /* Size of the checker squares */
+        background-image:
+            linear-gradient(45deg, var(--primary-color), 25%, transparent 25%, transparent 75%, var(--primary-color) 75%, var(--primary-color)),
+            linear-gradient(45deg, var(--primary-color) 25%, var(--secondary-color), 25%, var(--secondary-color) 75%, var(--primary-color) 75%, var(--primary-color));
         border-radius: 35%;
         margin-right: 10px;
     }
@@ -64,14 +68,18 @@
     }
 
     .artist-placeholder-text {
-        width: 70%;
-        height: 50%;
-        background-color: #ededed;
+        width: calc(70% );
+        height: calc(50% );
+        /* border: solid 2px var(--primary-color); */
+        background-size: 2px 2px; /* Size of the checker squares */
+        background-image:
+            linear-gradient(45deg, var(--primary-color), 25%, transparent 25%, transparent 75%, var(--primary-color) 75%, var(--primary-color)),
+            linear-gradient(45deg, var(--primary-color) 25%, var(--secondary-color), 25%, var(--secondary-color) 75%, var(--primary-color) 75%, var(--primary-color));
         border-radius: .5em;
     }
 
     span {
-        color: black;
+        color: var(--primary-color);
         font-size: 2.3vh;
         display: -webkit-box;
         -webkit-line-clamp: 2;

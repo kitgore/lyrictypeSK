@@ -140,6 +140,7 @@
     font-size: 3.2vh;
     line-height: 180%;
     font-weight: 500;
+    color: var(--primary-color);
   }
 
   .quote-input {
@@ -168,6 +169,7 @@
     animation: blink-animation 1s steps(1) infinite;
     transform: translateX(0);
     transition: transform 100ms ease;
+    color: var(--primary-color);
   }
   .cursor-placeholder {
     width: 0;

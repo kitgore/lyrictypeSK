@@ -1,5 +1,6 @@
 <script>
     import { onMount, afterUpdate, onDestroy } from 'svelte';
+    import { themeColors } from '$lib/services/store.js';
 
     export let content; // The content element that will be scrolled
     let contentHeight;
@@ -43,7 +44,7 @@
     <button class="scroll-arrow" on:click={scrollUp}>
         <!-- Inline SVG for the up arrow -->
         <svg width="100%" height="100%" viewBox="0 0 23 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 10.6L11.2222 1L1.44444 10.6L6.33333 10.6L6.33333 17L16.1111 17L16.1111 10.6L21 10.6Z" stroke="black"/>
+          <path d="M21 10.6L11.2222 1L1.44444 10.6L6.33333 10.6L6.33333 17L16.1111 17L16.1111 10.6L21 10.6Z" stroke="{$themeColors.primary}"/>
         </svg>
     </button>
     <button class="track">
@@ -52,7 +53,7 @@
     <button class="scroll-arrow" on:click={scrollDown}>
         <!-- Inline SVG for the down arrow, use the same SVG as the up arrow and rotate it -->
         <svg width="100%" height="100%" viewBox="0 0 23 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow down">
-            <path d="M21 10.6L11.2222 1L1.44444 10.6L6.33333 10.6L6.33333 17L16.1111 17L16.1111 10.6L21 10.6Z" stroke="black"/>
+            <path d="M21 10.6L11.2222 1L1.44444 10.6L6.33333 10.6L6.33333 17L16.1111 17L16.1111 10.6L21 10.6Z" stroke="{$themeColors.primary}"/>
         </svg>
     </button>
 </div>
@@ -70,8 +71,8 @@
   
     .scroll-arrow {
         width: 100%;
-        border: 2px solid black;
-        background-color: white;
+        border: 2px solid var(--primary-color);;
+        background-color: var(--secondary-color);
         aspect-ratio: 1; /* Makes the button square */
         padding: 0;
         display: flex;
@@ -84,8 +85,8 @@
   
     .track {
       width: 100%; /* Full width of the scrollbar container */
-      background-color: white;
-      border: 2px solid black;
+      background-color: var(--secondary-color);
+      border: 2px solid var(--primary-color);;
       flex-grow: 1; /* Take up remaining space */
       margin: 70% 0;
       border-radius: .2em;

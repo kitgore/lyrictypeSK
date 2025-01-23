@@ -6,6 +6,7 @@
     import { onMount } from 'svelte';
     import { recentArtists } from '$lib/services/store'
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
+    import { themeColors } from '$lib/services/store.js';
 
     let artistInput = '';
     let songTitle = '';
@@ -150,7 +151,7 @@
                 <div class="currentArtist">{displayedArtist}</div>       
             </div>
             <svg class="musicIcon" width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18.6779 0.220394C18.4735 0.0457943 18.2035 -0.0307252 17.9372 0.0112826L6.29208 1.84998C5.84528 1.92052 5.51616 2.30568 5.51616 2.75804V6.43547V12.258H3.67743C1.6497 12.2581 0 13.7703 0 15.629C0 17.4878 1.6497 19 3.67743 19C5.70516 19 7.35485 17.4878 7.35485 15.629V13.1774V7.22104L17.1613 5.67265V10.7258H15.3226C13.2949 10.7258 11.6452 12.238 11.6452 14.0968C11.6452 15.9555 13.2949 17.4678 15.3226 17.4678C17.3503 17.4678 19 15.9555 19 14.0968V11.6451V4.59678V0.919349C19 0.650492 18.8822 0.395068 18.6779 0.220394Z" fill="black"/>
+                <path d="M18.6779 0.220394C18.4735 0.0457943 18.2035 -0.0307252 17.9372 0.0112826L6.29208 1.84998C5.84528 1.92052 5.51616 2.30568 5.51616 2.75804V6.43547V12.258H3.67743C1.6497 12.2581 0 13.7703 0 15.629C0 17.4878 1.6497 19 3.67743 19C5.70516 19 7.35485 17.4878 7.35485 15.629V13.1774V7.22104L17.1613 5.67265V10.7258H15.3226C13.2949 10.7258 11.6452 12.238 11.6452 14.0968C11.6452 15.9555 13.2949 17.4678 15.3226 17.4678C17.3503 17.4678 19 15.9555 19 14.0968V11.6451V4.59678V0.919349C19 0.650492 18.8822 0.395068 18.6779 0.220394Z" fill="{$themeColors.primary}"/>
             </svg>      
         </div>
         <div class="contentLayout">
@@ -233,7 +234,6 @@
         justify-content: center;
         align-items: center;
         height: 100%;
-        /* padding-top: 45%; */
     }
 
     /* Header Section */
@@ -251,6 +251,7 @@
         justify-content: center;
         align-items: center;
         padding-left: 1%;
+        color: var(--primary-color);
     }
 
     .currentArtist {
@@ -263,6 +264,7 @@
         min-width: 0;  /* Allow text truncation */
         font-size: 3vh;
         font-weight: 600;
+        color: var(--primary-color);
     }
     .currentArtistContainer {
         display: flex;
@@ -302,7 +304,8 @@
     }
 
     .lyricsContainer {
-        border: 2px solid black;
+        border: 2px solid var(--primary-color);
+        background-color: var(--secondary-color);
         height: 100%;
         border-radius: .2em;
     }
@@ -324,6 +327,7 @@
         align-items: center;
         font-family: "Geneva", sans-serif;
         font-size: 3vh;
+        color: var(--primary-color);
     }
 
     .inputField {
@@ -336,8 +340,10 @@
         font-size: 2.5vh;
         line-height: 130%;
         font-weight: 400;
-        border: 2px solid black;
+        border: 2px solid var(--primary-color);
+        background-color: var(--secondary-color);
         height: 100%;
+        color: var(--primary-color);
     }
 
     .inputChar {
@@ -345,6 +351,7 @@
         font-family: "Geneva", sans-serif;
         font-size: 1.3em;
         font-weight: 200;
+        color: var(--primary-color);
     }
 
     .cursor {
@@ -357,6 +364,7 @@
         top: 16%;
         background-color: currentColor;
         animation: blink-animation 1s steps(1) infinite;
+        color: var(--primary-color);
     }
 
     .hiddenInput {
