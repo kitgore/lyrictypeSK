@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import ResultsDisplay from './ResultsDisplay.svelte';
+  import { applyDitheringToImage } from '$lib/services/dither-utils';
+  import { themeColors, ditherImages } from '$lib/services/store.js';
   export let lyrics;
   export let songTitle;
   export let artistName;
@@ -16,14 +18,40 @@
   let wpm = 0;
   let accuracy = 0;
   let preloadedImage;
+  let ditheredImageUrl = '';
   console.log(songTitle, artistName, imageUrl);
   
-  async function preloadImage(src) {
-    const img = new Image();
-    img.src = src;
-    img.onload = () => {
-      preloadedImage = img;
-    };
+  async function preloadAndDitherImage(src) {
+    try {
+      // First dither the image
+      const dithered = await applyDitheringToImage(src, $themeColors.primary, $themeColors.secondary, $ditherImages);
+      ditheredImageUrl = dithered;
+      
+      // Then preload it
+      const img = new Image();
+      img.src = ditheredImageUrl;
+      img.onload = () => {
+        preloadedImage = img;
+      };
+    } catch (error) {
+      console.error('Error in preload and dither:', error);
+      // Fallback to original image
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        preloadedImage = img;
+        ditheredImageUrl = src;
+      };
+    }
+  }
+
+  function startTest() {
+    if (!testStarted) {
+      startTime = new Date();
+      testStarted = true;
+      // Start dithering process when test starts
+      if (imageUrl) preloadAndDitherImage(imageUrl);
+    }
   }
 
   function focusInput() {
@@ -32,15 +60,8 @@
   
   onMount(() => {
     focusInput();
+    if (imageUrl) preloadAndDitherImage(imageUrl);
   });
-
-  function startTest() {
-    if (!testStarted) {
-      startTime = new Date();
-      testStarted = true;
-      preloadImage(imageUrl);
-    }
-  }
 
   // Function to end the test and calculate WPM and accuracy
   function endTest() {
@@ -49,13 +70,14 @@
     const charactersTyped = userInput.length;
     wpm = (charactersTyped / 5) / durationInMinutes;
 
-    const incorrectChars = formattedLyrics.reduce((acc, { class: charClass }) => acc + (charClass === 'incorrect' ? 1 : 0), 0);
+    const incorrectChars = formattedLyrics.reduce((acc, { class: charClass }) => 
+      acc + (charClass === 'incorrect' ? 1 : 0), 0);
     accuracy = ((charactersTyped - incorrectChars) / lyrics.length) * 100;
     showResults = true;
 
     console.log(`WPM: ${wpm.toFixed(2)}, Accuracy: ${accuracy.toFixed(2)}%`);
   }
-
+  
   $: if (lyrics) {
       // Reset state and focus when lyrics change
       showResults = false;
@@ -110,28 +132,55 @@
 </script>
 
 {#if showResults && preloadedImage}
-  <ResultsDisplay {wpm} {accuracy} {songTitle} {artistName} imageUrl={preloadedImage.src} continueFromQueue={continueFromQueue} />
+  <ResultsDisplay 
+    {wpm} 
+    {accuracy} 
+    {songTitle} 
+    {artistName} 
+    imageUrl={ditheredImageUrl} 
+    {continueFromQueue} 
+  />
 {:else}
-<div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>
-  {#each formattedLyrics as { char, class: spanClass }, i}
-    {#if i === cursorPosition}
+  <div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>
+    {#each formattedLyrics as { char, class: spanClass }, i}
+      {#if i === cursorPosition}
+        <span class="blinking-cursor"></span>
+      {/if}
+      <span class={spanClass}>{char}</span>
+    {/each}
+    {#if cursorPosition === formattedLyrics.length}
       <span class="blinking-cursor"></span>
     {/if}
-    <span class={spanClass}>{char}</span>
-  {/each}
-  <!-- Handle the case where the cursor should be at the end of the text -->
-  {#if cursorPosition === formattedLyrics.length}
-    <span class="blinking-cursor"></span>
-  {/if}
-  <input bind:this={inputElement} class="quote-input" type="text" bind:value={userInput} />
-</div>
+    <input bind:this={inputElement} class="quote-input" type="text" bind:value={userInput} />
+  </div>
 {/if}
-
 
 <style>
   * {
     box-sizing: border-box;
   }
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .visible {
+    display: block;
+  }
+
+  .results-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
   .quote-display{
     white-space: pre-wrap;
     padding: 1.5%;
