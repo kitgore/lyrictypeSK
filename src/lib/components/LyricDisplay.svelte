@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import ResultsDisplay from './ResultsDisplay.svelte';
   import { applyDitheringToImage } from '$lib/services/dither-utils';
-  import { themeColors, ditherImages } from '$lib/services/store.js';
+  import { themeColors, ditherImages, imageColors } from '$lib/services/store.js';
   export let lyrics;
   export let songTitle;
   export let artistName;
@@ -24,7 +24,7 @@
   async function preloadAndDitherImage(src) {
     try {
       // First dither the image
-      const dithered = await applyDitheringToImage(src, $themeColors.primary, $themeColors.secondary, $ditherImages);
+      const dithered = await applyDitheringToImage(src, $imageColors.primary, $imageColors.secondary, $ditherImages);
       ditheredImageUrl = dithered;
       
       // Then preload it

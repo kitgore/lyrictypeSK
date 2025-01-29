@@ -47,6 +47,7 @@
     function requeueArtist(artistId) {
         const artist = $recentArtists.find(artist => artist.artistId === artistId);
         recentArtists.set([artist, ...$recentArtists.filter(artist => artist.artistId !== artistId)]);
+        displayedArtist = artist.name;
         continueFromQueue();
         prepareQueue(artistId);
     }
@@ -57,23 +58,18 @@
         console.log("EXISTING ARTIST", existingArtist)
         const songQueue = await searchByArtistId(artistId, existingArtist.seenSongs);
 
-        recentArtists.set([
-            { 
-                name: existingArtist.name, 
-                imageUrl: existingArtist.imageUrl, 
-                seenSongs: [...existingArtist.seenSongs, songQueue.songIndex], 
-                artistId: existingArtist.artistId, 
-                songQueue: songQueue 
-            },
-            ...$recentArtists.filter(artist => artist.artistId !== artistId)
-        ]);
-        console.log("RECENT ARTISTS AFTER PREPARE QUEUE", $recentArtists);
+        setNewRecentArtist({
+            name: existingArtist.name, 
+            imageUrl: existingArtist.imageUrl, 
+            seenSongs: [...existingArtist.seenSongs, songQueue.songIndex], 
+            artistId: existingArtist.artistId, 
+            songQueue: songQueue
+        });
     }
 
     function continueFromQueue(){
         const currentArtistId = $recentArtists[0].artistId;
         playNextFromQueue(currentArtistId);
-        console.log("CONTINUE FROM QUEUE");
     }
 
     function playNextFromQueue(artistId) {
@@ -93,9 +89,9 @@
     }
 
     function setNewRecentArtist({ name, imageUrl, seenSongs, artistId, songQueue }){
+        displayedArtist = name;
         recentArtists.set([{ name: name, imageUrl: imageUrl, seenSongs: seenSongs, artistId: artistId, songQueue: songQueue }, 
         ...$recentArtists.filter(artist => artist.artistId !== artistId)]);
-        displayedArtist = name;
     }
 
     function setDisplayFromData(data){

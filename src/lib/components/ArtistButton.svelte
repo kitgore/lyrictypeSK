@@ -1,6 +1,6 @@
 <script>
     import { applyDitheringToImage } from '$lib/services/dither-utils';
-    import { themeColors, ditherImages } from '$lib/services/store.js';
+    import { themeColors, ditherImages, imageColors } from '$lib/services/store.js';
     export let name;
     export let imageUrl;
 
@@ -23,10 +23,11 @@
         }
 
         try {
+            console.log('Applying dithering to image:', imageUrl, $imageColors.primary, $imageColors.secondary, $ditherImages, 200)
             ditheredImageUrl = $ditherImages ? await applyDitheringToImage(
                 imageUrl,
-                $themeColors.primary,
-                $themeColors.secondary,
+                $imageColors.primary,
+                $imageColors.secondary,
                 $ditherImages,
                 200
             ) : imageUrl;
@@ -70,13 +71,16 @@
 <style>
     .artist-button, .artist-button-empty {
         border: 2px solid var(--primary-color);
-        border-radius: 1em;
+        border-radius: .8rem;
         height: calc(80% / 9);
         display: flex;
         align-items: center;
         justify-content: left;
         text-align: left;
-        padding: 5px;
+        padding: 2%;
+    }
+    .artist-button {
+        cursor: pointer;
     }
     .artist-button:hover {
         background-color: var(--primary-color);

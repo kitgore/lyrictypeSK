@@ -7,7 +7,13 @@
     import DesktopIcon from '../lib/components/DesktopIcon.svelte';
     import AboutDisplay from '../lib/components/AboutDisplay.svelte';
     import SettingsDisplay from '../lib/components/SettingsDisplay.svelte';
-    import { themeColors } from '$lib/services/store.js';
+    import { themeColors, backgroundColors, windowStore, windowActions } from '$lib/services/store.js';
+
+    // Subscribe to window store
+    let activeWindows = [];
+    const unsubscribe = windowStore.subscribe(state => {
+        activeWindows = state.windowStates;
+    });
 
     onMount(async () => {
         if (typeof window !== 'undefined') {
@@ -31,29 +37,70 @@
     }
 
     let windows = [
-    { id: 'typingTestWindow', title: 'Media Typer', isOpen: false, showScrollbar: true, component: TypingTest, position: { x: 10, y: 10 } },
-    { id: 'aboutDisplayWindow', title: 'System Info', isOpen: false, showScrollbar: false, component: AboutDisplay, position: { x: 30, y: 10 }, dimensions: {width: 37, height: 78} },
-    { id: 'settingsWindow', title: 'Settings', showScrollbar:false, isOpen: false, component: SettingsDisplay, position: { x: 10, y: 10 }, dimensions: {width: 37, height: 78} }
-];
+        { 
+            id: 'typingTestWindow', 
+            title: 'Media Typer', 
+            isOpen: false, 
+            showScrollbar: true, 
+            component: TypingTest, 
+            position: { x: 10, y: 10 },
+            dimensions: {width: 80, height: 80}
+        },
+        { 
+            id: 'aboutDisplayWindow', 
+            title: 'System Info', 
+            isOpen: false, 
+            showScrollbar: false, 
+            component: AboutDisplay, 
+            position: { x: 30, y: 10 }, 
+            dimensions: {width: 37, height: 78} 
+        },
+        { 
+            id: 'settingsWindow', 
+            title: 'Settings', 
+            showScrollbar: false, 
+            isOpen: false, 
+            component: SettingsDisplay, 
+            position: { x: 10, y: 10 }, 
+            dimensions: {width: 37, height: 78} 
+        }
+    ];
 
     function closeWindow(id) {
+        if (!id) return;
+        
         const index = windows.findIndex(w => w.id === id);
         if (index !== -1) {
             windows[index].isOpen = false;
-            windows = windows.slice(); // Reassign to trigger reactivity
+            windows = windows.slice(); // Trigger reactivity
+            windowActions.removeWindow(id);
         }
     }
-    function openWindow(id){
-        console.log("open window")
-        const index = windows.findIndex(w => w.id === id);
-        if (index !== -1) {
-            windows[index].isOpen = true;
-            windows = windows.slice(); // Reassign to trigger reactivity
+
+    function openWindow(id) {
+        if (!id) return;
+        
+        const window = windows.find(w => w.id === id);
+        if (window && !window.isOpen) {
+            window.isOpen = true;
+            windows = windows.slice();
+            windowActions.addWindow({
+                id: window.id,
+                title: window.title,
+                position: window.position,
+                dimensions: window.dimensions
+            });
+        } else if (window) {
+            windowActions.activateWindow(id);
         }
     }
 </script>
-<div style:--primary-color={$themeColors.primary}
-style:--secondary-color={$themeColors.secondary}>
+<div 
+style:--primary-color={$themeColors.primary}
+style:--secondary-color={$themeColors.secondary}
+style:--background-primary-color={$backgroundColors.primary}
+style:--background-secondary-color={$backgroundColors.secondary}
+>
 <Background></Background>
 <DesktopIcon label="Media Typer" onClick={() => openWindow('typingTestWindow')} position={ {x: 90.5, y: 8} }>
     <svg slot="icon" width="80" height="80" viewBox="0 0 37 46" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect x="1" y="0.5" width="35" height="39" rx="1.5" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/> <rect x="5" y="4.5" width="27" height="20" rx="1.5" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/> <rect x="3" y="39.5" width="31" height="6" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/> <line x1="18.5" y1="31.5" x2="30.5" y2="31.5" stroke="{$themeColors.primary}"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 7H8.5V8H7.5V7ZM7.5 10H8.5V11H7.5V10ZM8.5 13H7.5V14H8.5V13ZM7.5 16H8.5V17H7.5V16ZM8.5 19H7.5V20H8.5V19ZM10.5 7H11.5V8H10.5V7ZM11.5 10H10.5V11H11.5V10ZM10.5 13H11.5V14H10.5V13ZM11.5 16H10.5V17H11.5V16ZM10.5 19H11.5V20H10.5V19ZM14.5 7H13.5V8H14.5V7ZM13.5 10H14.5V11H13.5V10ZM14.5 19H13.5V20H14.5V19ZM16.5 7H17.5V8H16.5V7ZM17.5 10H16.5V11H17.5V10ZM19.5 7H20.5V8H19.5V7ZM23.5 7H22.5V8H23.5V7Z" fill="{$themeColors.primary}"/>
@@ -67,21 +114,16 @@ style:--secondary-color={$themeColors.secondary}>
 <DesktopIcon label="Trash" position={ {x: 91, y: 68} }>
     <svg slot="icon" width="80" height="80" viewBox="0 0 32 46" fill="none" xmlns="http://www.w3.org/2000/svg">    <rect x="12.5" y="0.5" width="8" height="1.93617" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/>    <rect x="0.5" y="2.45744" width="31" height="2.91489" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/>    <path d="M1.5 5.39362H30.5V44C30.5 44.8284 29.8284 45.5 29 45.5H3C2.17157 45.5 1.5 44.8284 1.5 44V5.39362Z" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/>    <path d="M6 9.78723L6.89893 10.667C7.28334 11.0433 7.5 11.5585 7.5 12.0964V39.0445C7.5 39.7203 7.1588 40.3503 6.5929 40.7195L6 41.1064" stroke="{$themeColors.primary}"/>    <path d="M12 9.78723L12.8989 10.667C13.2833 11.0433 13.5 11.5585 13.5 12.0964V39.0445C13.5 39.7203 13.1588 40.3503 12.5929 40.7195L12 41.1064" stroke="{$themeColors.primary}"/>    <path d="M18 9.78723L18.8989 10.667C19.2833 11.0433 19.5 11.5585 19.5 12.0964V39.0445C19.5 39.7203 19.1588 40.3503 18.5929 40.7195L18 41.1064" stroke="{$themeColors.primary}"/>    <path d="M24 9.78723L24.8989 10.667C25.2833 11.0433 25.5 11.5585 25.5 12.0964V39.0445C25.5 39.7203 25.1588 40.3503 24.5929 40.7195L24 41.1064" stroke="{$themeColors.primary}"/></svg>    
 </DesktopIcon>
-{#each windows as window (window.id)}
-    {#if window.isOpen}
-        <AppWindow title={window.title} showScrollbar={window.showScrollbar} position={window.position} dimensions={window.dimensions} onClose={() => closeWindow(window.id)}>
+    {#each windows.filter(w => w.isOpen) as window (window.id)}
+        <AppWindow 
+            id={window.id}
+            title={window.title}
+            showScrollbar={window.showScrollbar}
+            position={window.position}
+            dimensions={window.dimensions}
+            onClose={() => closeWindow(window.id)}
+        >
             <svelte:component this={window.component} />
         </AppWindow>
-    {/if}
-{/each}
+    {/each}
 </div>
-
-{#if $themeColors}
-    <style>
-        :global(:root) {
-            --primary-color: {$themeColors.primary};
-            --secondary-color: {$themeColors.secondary};
-        }
-    </style>
-{/if}
-

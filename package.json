@@ -20,6 +20,7 @@
 		"@thi.ng/pixel-dither": "^1.1.154",
 		"cors": "^2.8.5",
 		"firebase": "^10.8.0",
+		"js-cookie": "^3.0.5",
 		"textfit": "^2.4.0"
 	}
 }

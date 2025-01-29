@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store'
+import Cookies from 'js-cookie';
 
-export let recentArtists = writable([]);
+export const cookiesAccepted = writable(Cookies.get('cookiesAccepted') === 'true' || false)
 
 const defaultTheme = {
     primary: '#000000',
@@ -8,10 +9,12 @@ const defaultTheme = {
     name: "Default"
 }
 
-const inverseTheme = {
+const darkTheme = {
     primary: '#f0f6f0',
     secondary: '#222323',
-    name: "Inverse"
+    name: "Dark",
+    monoBackground: '#222323',
+    inverseImage: true
 };
 
 const blue = {
@@ -29,7 +32,7 @@ const paperback = {
 const whiteGreen = {
     primary: '#004c3d',
     secondary: '#ffeaf9',
-    name: "White Green"
+    name: "Bamboo"
 };
 
 const casio = {
@@ -41,7 +44,7 @@ const casio = {
 const gatoRoboto = {
     primary: '#323c39',
     secondary: '#d3c9a1',
-    name: "Gato Roboto"
+    name: "Hazy"
 };
 
 const peachy = {
@@ -59,14 +62,20 @@ const purp = {
 const redWhite = {
     primary: '#c62b69',
     secondary: '#edf4ff',
-    name: "Red White"
+    name: "Hibiscus"
 };
 
 const endgame = {
     primary: '#1b1233',
     secondary: '#dcf29d',
-    name: "Endgame"
+    name: "Pistachio"
 };
+
+const matcha = {
+    primary: '#2b4022',
+    secondary: '#7da580',
+    name: "Matcha"
+}
 
 const milkcarton = {
     primary: '#5b88e2',
@@ -95,7 +104,9 @@ const blueberry = {
 const matrix = {
     primary: '#26c30f',
     secondary: '#000000',
-    name: "Matrix"
+    name: "Matrix",
+    monoBackground: '#000000',
+    inverseImage: true
 }
 
 const coffee = {
@@ -116,21 +127,193 @@ const redrum = {
     name: "Redrum"
 }
 
-export const themeChoices = [ defaultTheme, inverseTheme, blue, paperback, whiteGreen, casio, gatoRoboto, peachy, purp, redWhite, endgame, milkcarton, 
-    puffs, creme, blueberry, matrix, coffee, strawberryMilk, redrum ];
+export const themeChoices = [ defaultTheme, darkTheme, creme, strawberryMilk, whiteGreen, casio, blue, paperback,  gatoRoboto, peachy, purp, redWhite, endgame, milkcarton, 
+    puffs,  blueberry, matrix, coffee,  redrum, matcha ];
 
 export const currentTheme = writable(defaultTheme);
-
 export const themeColors = writable({
-    primary: currentTheme.primary, // var(--primary-color);
-    secondary: currentTheme.secondary, // white
+    primary: currentTheme.primary,
+    secondary: currentTheme.secondary
+});
+export const backgroundColors = writable({
+    primary: currentTheme.primary,
+    secondary: currentTheme.secondary
+});
+export const imageColors = writable({
+    primary: currentTheme.primary,
+    secondary: currentTheme.secondary
 });
 
 export const ditherImages = writable(true);
+export const recentArtists = writable([]);
+
 
 currentTheme.subscribe(theme => {
     themeColors.set({
         primary: theme.primary,
         secondary: theme.secondary
     });
+    backgroundColors.set({
+        primary: theme.monoBackground ? theme.monoBackground : theme.primary,
+        secondary: theme.monoBackground ? theme.monoBackground : theme.secondary
+    });
+    imageColors.set({
+        primary: theme.inverseImage ? theme.secondary : theme.primary,
+        secondary: theme.inverseImage ? theme.primary : theme.secondary
+    });
 });
+
+cookiesAccepted.subscribe(accepted => {
+    if (accepted) {
+        Cookies.set('cookiesAccepted', 'true');
+        
+        const savedTheme = Cookies.get('currentTheme');
+        const savedColors = Cookies.get('themeColors');
+        const savedBackground = Cookies.get('backgroundColor');
+        const savedDither = Cookies.get('ditherImages');
+        const savedArtists = Cookies.get('recentArtists');
+
+        if (savedTheme) currentTheme.set(JSON.parse(savedTheme));
+        if (savedColors) themeColors.set(JSON.parse(savedColors));
+        if (savedBackground) backgroundColors.set(JSON.parse(savedBackground));
+        if (savedDither) ditherImages.set(JSON.parse(savedDither));
+        if (savedArtists) recentArtists.set(JSON.parse(savedArtists));
+
+        currentTheme.subscribe(value => {
+            Cookies.set('currentTheme', JSON.stringify(value));
+            themeColors.set({
+                primary: value.primary,
+                secondary: value.secondary
+            });
+            backgroundColors.set({
+                primary: value.monoBackground ? value.monoBackground : value.primary,
+                secondary: value.monoBackground ? value.monoBackground : value.secondary
+            });
+            imageColors.set({
+                primary: value.inverseImage ? value.secondary : value.primary,
+                secondary: value.inverseImage ? value.primary : value.secondary
+            });
+        });
+
+        themeColors.subscribe(value => {
+            Cookies.set('themeColors', JSON.stringify(value));
+        });
+
+        backgroundColors.subscribe(value => {
+            Cookies.set('backgroundColor', JSON.stringify(value));
+        });
+
+        ditherImages.subscribe(value => {
+            Cookies.set('ditherImages', JSON.stringify(value));
+        });
+        imageColors.subscribe(value => {
+            Cookies.set('imageColors', JSON.stringify(value));
+        });
+
+        recentArtists.subscribe(value => {
+            Cookies.set('recentArtists', JSON.stringify(value));
+        });
+
+    } else {
+        Cookies.remove('currentTheme');
+        Cookies.remove('themeColors');
+        Cookies.remove('backgroundColor');
+        Cookies.remove('ditherImages');
+        Cookies.remove('recentArtists');
+        Cookies.remove('cookiesAccepted');
+    }
+});
+
+const createWindowStore = () => {
+    const { subscribe, set, update } = writable({
+        activeWindowId: null,
+        windowStates: [],
+        nextZIndex: 1
+    });
+
+    const updateWindowPosition = (id, newPosition) => {
+        update(state => ({
+            ...state,
+            windowStates: state.windowStates.map(window => 
+                window.id === id 
+                    ? { ...window, position: newPosition }
+                    : window
+            )
+        }));
+    };
+
+    return {
+        subscribe,
+        activateWindow: (id) => update(state => {
+            if (!id) return state;
+            
+            const newNextZIndex = state.nextZIndex + 1;
+            return {
+                ...state,
+                activeWindowId: id,
+                nextZIndex: newNextZIndex,
+                windowStates: state.windowStates.map(window => ({
+                    ...window,
+                    zIndex: window.id === id ? newNextZIndex : window.zIndex,
+                    isActive: window.id === id
+                }))
+            };
+        }),
+        addWindow: (windowData) => update(state => {
+            if (!windowData.id) return state;
+            
+            // Check if window already exists
+            const existingWindow = state.windowStates.find(w => w.id === windowData.id);
+            if (existingWindow) {
+                return {
+                    ...state,
+                    activeWindowId: windowData.id,
+                    windowStates: state.windowStates.map(w => ({
+                        ...w,
+                        isActive: w.id === windowData.id
+                    }))
+                };
+            }
+
+            const newNextZIndex = state.nextZIndex + 1;
+            const newWindow = {
+                ...windowData,
+                zIndex: newNextZIndex,
+                isActive: true,
+                position: windowData.position // Preserve the initial position
+            };
+            
+            return {
+                activeWindowId: windowData.id,
+                nextZIndex: newNextZIndex,
+                windowStates: state.windowStates
+                    .map(w => ({...w, isActive: false}))
+                    .concat(newWindow)
+            };
+        }),
+        removeWindow: (id) => update(state => {
+            if (!id) return state;
+            
+            const filteredWindows = state.windowStates.filter(w => w.id !== id);
+            const lastWindow = filteredWindows[filteredWindows.length - 1];
+            
+            return {
+                activeWindowId: lastWindow ? lastWindow.id : null,
+                nextZIndex: state.nextZIndex,
+                windowStates: filteredWindows.map(w => ({
+                    ...w,
+                    isActive: w.id === (lastWindow ? lastWindow.id : null)
+                }))
+            };
+        }),
+        updatePosition: updateWindowPosition
+    };
+};
+
+export const windowStore = createWindowStore();
+export const windowActions = {
+    activateWindow: (id) => windowStore.activateWindow(id),
+    addWindow: (windowData) => windowStore.addWindow(windowData),
+    removeWindow: (id) => windowStore.removeWindow(id),
+    updatePosition: (id, position) => windowStore.updatePosition(id, position)
+};

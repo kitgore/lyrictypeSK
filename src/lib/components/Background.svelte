@@ -1,5 +1,5 @@
 <script>
-    import { themeColors } from '$lib/services/store.js';
+    import { themeColors, backgroundColors } from '$lib/services/store.js';
 </script>
 
 <div class="hotbar">
@@ -45,8 +45,8 @@
         height: 100vh;
         background-size: 4px 4px; /* Size of the checker squares */
         background-image:
-            linear-gradient(45deg, var(--primary-color), 25%, transparent 25%, transparent 75%, var(--primary-color) 75%, var(--primary-color)),
-            linear-gradient(45deg, var(--primary-color) 25%, var(--secondary-color), 25%, var(--secondary-color) 75%, var(--primary-color) 75%, var(--primary-color));
+            linear-gradient(45deg, var(--background-primary-color), 25%, transparent 25%, transparent 75%, var(--background-primary-color) 75%, var(--background-primary-color)),
+            linear-gradient(45deg, var(--background-primary-color) 25%, var(--background-secondary-color), 25%, var(--background-secondary-color) 75%, var(--background-primary-color) 75%, var(--background-primary-color));
         background-position: 0 0, 10px 10px;
         z-index: -2; /* Keeps the background behind all other content */
     }
