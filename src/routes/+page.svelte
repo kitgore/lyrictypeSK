@@ -1,3 +1,7 @@
+<head>
+    <title>LyricType</title>
+</head>
+
 <script>
     import { onMount } from 'svelte';
     import app from '$lib/services/initFirebase';
@@ -53,7 +57,7 @@
             showScrollbar: false, 
             component: AboutDisplay, 
             position: { x: 30, y: 10 }, 
-            dimensions: {width: 37, height: 78} 
+            dimensions: {width: 37, height: 85} 
         },
         { 
             id: 'settingsWindow', 

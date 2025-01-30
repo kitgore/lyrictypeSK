@@ -1,7 +1,3 @@
-<svelte head>
-    <title>System Information</title>
-</svelte>
-
 <div class="page-container">
         <div class="logo-and-body-container">
             <div class="logo-container">

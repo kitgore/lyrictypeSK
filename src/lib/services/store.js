@@ -224,29 +224,19 @@ cookiesAccepted.subscribe(accepted => {
     }
 });
 
-const createWindowStore = () => {
-    const { subscribe, set, update } = writable({
-        activeWindowId: null,
-        windowStates: [],
-        nextZIndex: 1
-    });
+const initialState = {
+    activeWindowId: null,
+    windowStates: [],
+    nextZIndex: 1
+};
 
-    const updateWindowPosition = (id, newPosition) => {
-        update(state => ({
-            ...state,
-            windowStates: state.windowStates.map(window => 
-                window.id === id 
-                    ? { ...window, position: newPosition }
-                    : window
-            )
-        }));
-    };
+export const windowStore = writable(initialState);
 
-    return {
-        subscribe,
-        activateWindow: (id) => update(state => {
-            if (!id) return state;
-            
+export const windowActions = {
+    activateWindow: (id) => {
+        if (!id) return;
+        
+        windowStore.update(state => {
             const newNextZIndex = state.nextZIndex + 1;
             return {
                 ...state,
@@ -258,12 +248,15 @@ const createWindowStore = () => {
                     isActive: window.id === id
                 }))
             };
-        }),
-        addWindow: (windowData) => update(state => {
-            if (!windowData.id) return state;
-            
-            // Check if window already exists
+        });
+    },
+
+    addWindow: (windowData) => {
+        if (!windowData.id) return;
+        
+        windowStore.update(state => {
             const existingWindow = state.windowStates.find(w => w.id === windowData.id);
+            
             if (existingWindow) {
                 return {
                     ...state,
@@ -280,9 +273,9 @@ const createWindowStore = () => {
                 ...windowData,
                 zIndex: newNextZIndex,
                 isActive: true,
-                position: windowData.position // Preserve the initial position
+                position: windowData.position
             };
-            
+
             return {
                 activeWindowId: windowData.id,
                 nextZIndex: newNextZIndex,
@@ -290,30 +283,37 @@ const createWindowStore = () => {
                     .map(w => ({...w, isActive: false}))
                     .concat(newWindow)
             };
-        }),
-        removeWindow: (id) => update(state => {
-            if (!id) return state;
-            
+        });
+    },
+
+    removeWindow: (id) => {
+        if (!id) return;
+        
+        windowStore.update(state => {
             const filteredWindows = state.windowStates.filter(w => w.id !== id);
             const lastWindow = filteredWindows[filteredWindows.length - 1];
-            
+
             return {
-                activeWindowId: lastWindow ? lastWindow.id : null,
+                activeWindowId: lastWindow?.id ?? null,
                 nextZIndex: state.nextZIndex,
                 windowStates: filteredWindows.map(w => ({
                     ...w,
-                    isActive: w.id === (lastWindow ? lastWindow.id : null)
+                    isActive: w.id === lastWindow?.id
                 }))
             };
-        }),
-        updatePosition: updateWindowPosition
-    };
-};
+        });
+    },
 
-export const windowStore = createWindowStore();
-export const windowActions = {
-    activateWindow: (id) => windowStore.activateWindow(id),
-    addWindow: (windowData) => windowStore.addWindow(windowData),
-    removeWindow: (id) => windowStore.removeWindow(id),
-    updatePosition: (id, position) => windowStore.updatePosition(id, position)
+    updatePosition: (id, newPosition) => {
+        if (!id) return;
+        
+        windowStore.update(state => ({
+            ...state,
+            windowStates: state.windowStates.map(window =>
+                window.id === id 
+                    ? { ...window, position: newPosition }
+                    : window
+            )
+        }));
+    }
 };
