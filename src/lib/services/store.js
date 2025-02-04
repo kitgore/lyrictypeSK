@@ -210,10 +210,17 @@ cookiesAccepted.subscribe(accepted => {
             Cookies.set('imageColors', JSON.stringify(value));
         });
 
+        if (!savedArtists) {
+            let currentArtists;
+            recentArtists.subscribe(value => {
+                currentArtists = value;
+            })();  // Immediately unsubscribe after getting value
+            Cookies.set('recentArtists', JSON.stringify(currentArtists));
+        }
+
         recentArtists.subscribe(value => {
             Cookies.set('recentArtists', JSON.stringify(value));
         });
-
     } else {
         Cookies.remove('currentTheme');
         Cookies.remove('themeColors');

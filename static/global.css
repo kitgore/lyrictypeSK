@@ -16,4 +16,5 @@ body {
     image-rendering: auto;
     -webkit-font-smoothing: antialiased; /* For WebKit browsers like Chrome and Safari */
     -moz-osx-font-smoothing: grayscale; /* For Firefox */
+    overflow: hidden;
   }

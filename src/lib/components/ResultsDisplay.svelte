@@ -9,7 +9,12 @@
     import { onMount, afterUpdate } from 'svelte';
     let songContainer;
     let artistContainer;
-    import { themeColors } from '$lib/services/store.js';
+    import { themeColors, ditherImages, imageColors } from '$lib/services/store.js';
+    import { applyDitheringToImage } from '$lib/services/dither-utils';
+
+    let ditheredImageUrl = '';
+    let isLoading = false;
+    let currentImageUrl = '';
 
 
     function handleResize() {
@@ -58,13 +63,18 @@
         });
         }
     }
+
 </script>
 
 <div class="resultsContainer">
     <div class="topSection">
         <div class="songDetails">
             <div class="albumCover">
-                <img src={imageUrl} class="albumArt" alt="album art">
+                {#if isLoading || !imageUrl}
+                    <div class="loading-placeholder"></div>
+                {:else}
+                    <img src={imageUrl} class="albumArt" alt="album art">
+                {/if}                
             </div>
             <div class="songText">
                 <div class="songTextContainer" bind:this={songContainer}>{songTitle}</div>
@@ -174,6 +184,19 @@
         height: 100%;
         justify-content: center;
         align-items: center;
+    }
+
+    .loading-placeholder {
+        margin: 0;
+        height: 90%;
+        object-fit: contain;
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        border: 2px solid var(--primary-color);
+        background-color: var(--primary-color);
+        opacity: 0.2;
+        animation: pulse 1.5s infinite;
     }
 
     .albumArt {

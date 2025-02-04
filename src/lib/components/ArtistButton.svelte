@@ -44,7 +44,7 @@
     }
 
     // Watch for changes in the dither setting
-    $: if ($ditherImages !== undefined && imageUrl && imageUrl !== '/default-image.svg') {
+    $: if ($ditherImages !== undefined && imageUrl && imageUrl !== '/default-image.svg' && $imageColors) {
         processDithering();
     }
 </script>

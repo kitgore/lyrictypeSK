@@ -7,6 +7,7 @@ export async function getArtistLyrics(artistName) {
     const callGetArtistLyrics = httpsCallable(functions, 'initialArtistSearch');
   
     try {
+      console.log("Artist Name: ", artistName)
       const result = await callGetArtistLyrics({ artistName });
       return result.data; // The response from your Firebase Function is accessed via result.data
     } catch (error) {

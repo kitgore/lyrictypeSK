@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "lyrictype-cdf2c"
-  }
+  },
+  "targets": {
+    "lyrictype-cdf2c": {
+      "hosting": {
+        "lyrictype": [
+          "lyrictype"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

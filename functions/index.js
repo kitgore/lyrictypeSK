@@ -1,15 +1,36 @@
-const functions = require('firebase-functions');
-const fetch = require('node-fetch');
-const cheerio = require('cheerio');
-const fs = require('fs');
-const path = require('path');
+import { onRequest, onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineString } from 'firebase-functions/params';
+import fetch from 'node-fetch';
+import * as cheerio from 'cheerio';
+import fs from 'node:fs';
+import path from 'node:path';
+import { handler } from './server.js';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const geniusApiKeyParam = defineString('GENIUS_KEY');
+
+export const ssrServer = onRequest({
+    timeoutSeconds: 60,
+    minInstances: 0,
+    maxInstances: 100,
+    region: 'us-central1',
+    invoker: 'public'  // This makes the function publicly accessible
+}, async (request, response) => {
+    try {
+        return await handler(request, response);
+    } catch (error) {
+        console.error('SSR Error:', error);
+        response.status(500).send('Internal Server Error');
+    }
+});
 
 // ensure that the first result matches the search
 async function getInitialSearch(artist_name) {
-    // Search for songs by the artist using the Genius API
     const searchUrl = "https://api.genius.com/search";
-    let geniusApiKey = functions.config().genius ? functions.config().genius.key : null;
+    let geniusApiKey = geniusApiKeyParam.value();
 
     // Fallback to local config if the Firebase config is null
     if (!geniusApiKey) {
@@ -22,6 +43,7 @@ async function getInitialSearch(artist_name) {
             throw new Error('API key not found. Please configure your API key.');
         }
     }
+
     const headers = {
         "Authorization": geniusApiKey
     };
@@ -34,29 +56,43 @@ async function getInitialSearch(artist_name) {
     if (songs.length === 0) {
         return { songTitle: "No songs found.", lyrics: "" };
     }
+
     const artistId = songs[0].result.primary_artist.id;
     let songReturn = await getSongsById(artistId, []);
     songReturn.initialArtist = songs[0].result.primary_artist.name;
     songReturn.initialArtistImg = songs[0].result.primary_artist.image_url;
     songReturn.initialArtistId = artistId;
-    // console.log(songReturn)
     return songReturn;
 }
 
-exports.initialArtistSearch = functions.https.onCall(async (data, context) => {
-    const { artistName } = data;
+export const initialArtistSearch = onCall({
+    timeoutSeconds: 60,
+    minInstances: 0,
+    maxInstances: 100,
+    region: 'us-central1'
+}, async (request, context) => {
+    // Access the nested data property
+    const { artistName } = request.data;
+    
+    if (!artistName) {
+        console.error("artistName is undefined. Full data object:", request);
+        throw new HttpsError('invalid-argument', 'Artist name is required');
+    }
+
     try {
+        console.log("Processing artist name:", artistName);
         const returnJSON = await getInitialSearch(artistName);
         return returnJSON;
     } catch (error) {
         console.error("Error fetching artist lyrics:", error);
-        throw new functions.https.HttpsError('internal', 'Failed to fetch artist lyrics', error.toString());
+        throw new HttpsError('internal', 'Failed to fetch artist lyrics', error.toString());
     }
 });
 
+
 async function getSongsById(artistId, seenSongs) {
     const searchUrl = "https://api.genius.com/artists/";
-    let geniusApiKey = functions.config().genius ? functions.config().genius.key : null;
+    let geniusApiKey = geniusApiKeyParam.value();
     const pageSize = 10;
 
     // Fallback to local config if the Firebase config is null
@@ -94,7 +130,13 @@ async function getSongsById(artistId, seenSongs) {
         // console.log(`${searchUrl}${artistId}/songs?per_page=1&page=${songIndex}&sort=popularity`)
         const response = await fetch(`${searchUrl}${artistId}/songs?per_page=1&page=${songIndex}&sort=popularity`, { headers });
         const data = await response.json();
+        if (!data.response || !data.response.songs || !data.response.songs[0]) {
+            console.error("Unexpected API response structure:", data);
+            throw new Error('Invalid API response structure');
+        }
         const song = data.response.songs[0];
+
+        
 
         let lyrics = '';
 
@@ -102,7 +144,7 @@ async function getSongsById(artistId, seenSongs) {
         const songPageResponse = await fetch(song.url);
         const songPageHtml = await songPageResponse.text();
 
-        // Parse the page with cheerio
+        // Parse the page with load
         const $ = cheerio.load(songPageHtml);
         let lyricsHtml = '';
 
@@ -165,6 +207,7 @@ async function getSongsById(artistId, seenSongs) {
             songIndex: songIndex,
             lyrics: lyrics
         };
+        console.log(returnJSON)
         return returnJSON;
     } catch (error) {
         console.error("Error navigating to song URL:", error);
@@ -173,17 +216,29 @@ async function getSongsById(artistId, seenSongs) {
 }
 
 
-exports.searchByArtistId = functions.https.onCall(async (data, context) => {
-    const { artistId, seenSongs } = data;
+export const searchByArtistId = onCall({
+    timeoutSeconds: 60,
+    minInstances: 0,
+    maxInstances: 100,
+    region: 'us-central1'
+}, async (request, context) => {
+    const { artistId, seenSongs } = request.data;
     try {
         const returnJSON = await getSongsById(artistId, seenSongs);
+        console.log(returnJSON)
         return returnJSON;
     } catch (error) {
         console.error("Error fetching artist lyrics:", error);
-        throw new functions.https.HttpsError('internal', 'Failed to fetch artist lyrics', error.toString());
+        throw new HttpsError('internal', '...')
     }
 });
 
+export const healthCheck = onRequest({
+    timeoutSeconds: 10,
+    region: 'us-central1'
+}, (req, res) => {
+    res.status(200).send('OK');
+});
 
 // console.log(getInitialSearch("Bladee"));
 // console.log(getSongsById(1421, []));
@@ -233,8 +288,8 @@ exports.searchByArtistId = functions.https.onCall(async (data, context) => {
 //             const songPageResponse = await fetch(randomSong.url);
 //             const songPageHtml = await songPageResponse.text();
     
-//             // Parse the page with cheerio
-//             const $ = cheerio.load(songPageHtml);
+//             // Parse the page with load
+//             const $ = load.load(songPageHtml);
 //             let lyricsHtml = '';
     
 //             // Select the container that includes the lyrics and retrieve the HTML

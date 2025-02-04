@@ -20,6 +20,8 @@
   let preloadedImage;
   let ditheredImageUrl = '';
   console.log(songTitle, artistName, imageUrl);
+
+
   
   async function preloadAndDitherImage(src) {
     try {
@@ -129,17 +131,27 @@
   };
 
   $: cursorPosition = userInput.length;
+
+  $: if ($ditherImages || $imageColors) {
+    console.log("REDITHERING")
+    preloadAndDitherImage(imageUrl);
+  }
+  else{
+    ditheredImageUrl = imageUrl;
+  }
+
+  $: console.log('ditherImages value:', $ditherImages);
 </script>
 
 {#if showResults && preloadedImage}
-  <ResultsDisplay 
-    {wpm} 
-    {accuracy} 
-    {songTitle} 
-    {artistName} 
-    imageUrl={ditheredImageUrl} 
-    {continueFromQueue} 
-  />
+    <ResultsDisplay
+      {wpm}
+      {accuracy}
+      {songTitle}
+      {artistName}
+      imageUrl={ditheredImageUrl}
+      {continueFromQueue}
+    />
 {:else}
   <div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>
     {#each formattedLyrics as { char, class: spanClass }, i}

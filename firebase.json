@@ -10,5 +10,30 @@
         "firebase-debug.*.log"
       ]
     }
-  ]
+  ],
+  "hosting": {
+    "site": "lyrictype",
+    "public": "build/client",
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "ssrServer"
+      }
+    ],
+    "ignore": [
+      "**/node_modules/**"
+    ]
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
 }
