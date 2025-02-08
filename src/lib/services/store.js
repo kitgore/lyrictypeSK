@@ -3,6 +3,11 @@ import Cookies from 'js-cookie';
 
 export const cookiesAccepted = writable(Cookies.get('cookiesAccepted') === 'true' || false)
 
+const defaultCorrection = {
+    correct: "#368e5e",
+    incorrect: "#bd5454"
+}
+
 const defaultTheme = {
     primary: '#000000',
     secondary: '#ffffff',
@@ -26,7 +31,8 @@ const blue = {
 const paperback = {
     primary: '#382b26',
     secondary: '#b8c2b9',
-    name: "Paperback"
+    name: "Paperback",
+    correct: "#507354"
 };
 
 const whiteGreen = {
@@ -38,7 +44,9 @@ const whiteGreen = {
 const casio = {
     primary: '#000000',
     secondary: '#83b07e',
-    name: "Casio"
+    name: "Casio",
+    correct: "#497444",
+    incorrect: "#b06464"
 };
 
 const gatoRoboto = {
@@ -50,13 +58,15 @@ const gatoRoboto = {
 const peachy = {
     primary: '#242234',
     secondary: '#facab8',
-    name: "Peachy"
+    name: "Peachy",
+    incorrect: "#fa7373"
 };
 
 const purp = {
     primary: '#17141c',
     secondary: '#a692b0',
-    name: "Purp"
+    name: "Purp",
+    correct: "#5c8961",
 };
 
 const redWhite = {
@@ -98,7 +108,9 @@ const creme = {
 const blueberry = {
     primary: '#40318e',
     secondary: '#88d7de',
-    name: "Blueberry"
+    name: "Blueberry",
+    correct: "#912c95",
+    incorrect: "#d64c89"
 }
 
 const matrix = {
@@ -106,7 +118,9 @@ const matrix = {
     secondary: '#000000',
     name: "Matrix",
     monoBackground: '#000000',
-    inverseImage: true
+    inverseImage: true,
+    correct: '#d1ffcd',
+    incorrect: '#da3333'
 }
 
 const coffee = {
@@ -144,6 +158,8 @@ export const imageColors = writable({
     secondary: currentTheme.secondary
 });
 
+export const correctionColors = writable(defaultCorrection);
+
 export const ditherImages = writable(true);
 export const recentArtists = writable([]);
 
@@ -160,6 +176,10 @@ currentTheme.subscribe(theme => {
     imageColors.set({
         primary: theme.inverseImage ? theme.secondary : theme.primary,
         secondary: theme.inverseImage ? theme.primary : theme.secondary
+    });
+    correctionColors.set({
+        correct: theme.correct ? theme.correct : defaultCorrection.correct,
+        incorrect: theme.incorrect ? theme.incorrect : defaultCorrection.incorrect
     });
 });
 
@@ -192,6 +212,10 @@ cookiesAccepted.subscribe(accepted => {
             imageColors.set({
                 primary: value.inverseImage ? value.secondary : value.primary,
                 secondary: value.inverseImage ? value.primary : value.secondary
+            });
+            correctionColors.set({
+                correct: value.correct ? value.correct : defaultCorrection.correct,
+                incorrect: value.incorrect ? value.incorrect : defaultCorrection.incorrect
             });
         });
 

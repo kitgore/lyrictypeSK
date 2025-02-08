@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import ResultsDisplay from './ResultsDisplay.svelte';
   import { applyDitheringToImage } from '$lib/services/dither-utils';
-  import { themeColors, ditherImages, imageColors } from '$lib/services/store.js';
+  import { ditherImages, imageColors, correctionColors } from '$lib/services/store.js';
   export let lyrics;
   export let songTitle;
   export let artistName;
@@ -60,6 +60,9 @@
     if(inputElement) inputElement.focus();
   }
   
+  $: document.documentElement.style.setProperty('--correct-color', $correctionColors.correct);
+  $: document.documentElement.style.setProperty('--incorrect-color', $correctionColors.incorrect);
+
   onMount(() => {
     focusInput();
     if (imageUrl) preloadAndDitherImage(imageUrl);
@@ -209,13 +212,12 @@
     opacity: 0;
     background-color: transparent;
   }
-
   .correct {
-    color: rgb(54, 142, 94);
+    color: var(--correct-color);
   }
 
   .incorrect {
-    color: #bd5454;
+    color: var(--incorrect-color);
   }
 
   .blinking-cursor {

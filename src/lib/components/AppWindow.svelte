@@ -100,7 +100,7 @@
     bind:this={appWindow}
     on:mousedown={onWindowClick}
     style="
-        top: {windowState.posit11ion?.y || position.y}vh;
+        top: {windowState.position?.y || position.y}vh;
         left: {windowState.position?.x || position.x}vw;
         width: {dimensions.width}%;
         height: {dimensions.height}vh;
