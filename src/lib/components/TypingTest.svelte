@@ -6,7 +6,12 @@
     import { onMount } from 'svelte';
     import { recentArtists } from '$lib/services/store'
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
-    import { themeColors } from '$lib/services/store.js';
+    import { themeColors, getElementTabIndex } from '$lib/services/store.js';
+    
+    export let id; //window id
+
+    $: inputTabIndex = getElementTabIndex(id, 10);
+    $: buttonTabIndex = getElementTabIndex(id, 2);
 
     let artistInput = '';
     let songTitle = '';
@@ -21,6 +26,14 @@
     let inputElement;
     let displayedArtist = 'Artist';
     let loading = false;
+
+    function handleKeydown(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            focusInput();
+        }
+        console.log(inputTabIndex)
+    }
 
     // Set the artist input to whats in the input field
     async function handleArtistInput(event) {
@@ -178,9 +191,9 @@
             </div>
         </div>
     </div>
-    <div class="inputContainer" role="button" tabindex="0" on:click={focusInput} on:keydown={console.log("todo")}>
+    <div class="inputContainer" on:click={focusInput} on:keydown={handleKeydown}>
         <div class="inputLabel">Artist Name:</div>
-        <div class="inputField">
+        <div class="inputField" on:click={focusInput} on:keydown={handleKeydown}>
             {#each artistInput.split('') as char, i}
                 <span class="inputChar">{char}</span>
             {/each}
@@ -188,12 +201,14 @@
                 <span class="cursor"></span>
             {/if}
         </div>
-        <input 
+        <input  
             bind:this={inputElement} 
             class="hiddenInput" 
-            type="text"
-            aria-hidden="true"
+            type="textbox"
             bind:value={artistInput}
+            on:focus={focusInput}
+            on:blur={blurInput}
+            tabindex={inputTabIndex}
         />
     </div>
 </div>

@@ -127,7 +127,10 @@ style:--background-secondary-color={$backgroundColors.secondary}
             dimensions={window.dimensions}
             onClose={() => closeWindow(window.id)}
         >
-            <svelte:component this={window.component} />
+            <svelte:component 
+                this={window.component} 
+                id={window.id}
+            />
         </AppWindow>
     {/each}
 </div>

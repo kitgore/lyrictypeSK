@@ -51,7 +51,7 @@
 
 {#if name}
     <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <div class="artist-button" role="button" on:click  aria-label="Artist Button" on:keydown={console.log("bruh")}>
+    <div class="artist-button" role="button" on:click  aria-label="Artist Button" on:keydown={console.log("bruh")} tabindex=4>
         <div class="image-container">
             {#if isLoading || !ditheredImageUrl}
                 <div class="loading-placeholder"></div>

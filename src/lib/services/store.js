@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store'
+import { writable, derived } from 'svelte/store'
 import Cookies from 'js-cookie';
 
 export const cookiesAccepted = writable(Cookies.get('cookiesAccepted') === 'true' || false)
@@ -348,3 +348,36 @@ export const windowActions = {
         }));
     }
 };
+
+export const tabIndexStore = derived(windowStore, ($windowStore) => {
+    // Sort windows by z-index to determine tab order
+    const sortedWindows = [...$windowStore.windowStates].sort((a, b) => a.zIndex - b.zIndex);
+    
+    // Create a map of window IDs to their base tab index
+    const tabIndexMap = new Map();
+    let baseTabIndex = 1; // Start from 1 since 0 is typically for main navigation
+    
+    sortedWindows.forEach(window => {
+        tabIndexMap.set(window.id, baseTabIndex);
+        // Increment by 100 to leave room for elements within each window
+        baseTabIndex += 100;
+    });
+    
+    return tabIndexMap;
+});
+
+export function getElementTabIndex(windowId, elementIndex) {
+    let tabIndexMap;
+    
+    // Subscribe to the store to get current tab index map
+    tabIndexStore.subscribe(value => {
+        tabIndexMap = value;
+    })();
+    
+    if (!tabIndexMap.has(windowId)) {
+        return -1; // Window not found
+    }
+    
+    const baseTabIndex = tabIndexMap.get(windowId);
+    return baseTabIndex + elementIndex;
+}

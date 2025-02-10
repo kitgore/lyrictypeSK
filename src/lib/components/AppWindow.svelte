@@ -131,7 +131,7 @@
     </div>
     <div class="window-content" bind:this={contentElement}>
         <div class="content-area">
-            <slot></slot>
+            <slot {id}></slot>
         </div>
         <div class="scrollbar-container">
             {#if contentElement && showScrollbar}
