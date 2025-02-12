@@ -51,7 +51,7 @@
 
 {#if name}
     <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <div class="artist-button" role="button" on:click  aria-label="Artist Button" on:keydown={console.log("bruh")} tabindex=4>
+    <div class="artist-button" role="button" on:click on:keydown  aria-label="Artist Button" tabindex=4>
         <div class="image-container">
             {#if isLoading || !ditheredImageUrl}
                 <div class="loading-placeholder"></div>
@@ -78,14 +78,17 @@
         justify-content: left;
         text-align: left;
         padding: 2%;
+        outline: none
     }
     .artist-button {
         cursor: pointer;
     }
-    .artist-button:hover {
+    .artist-button:hover,
+    .artist-button:focus {
         background-color: var(--primary-color);
     }
-    .artist-button:hover span {
+    .artist-button:hover span,
+    .artist-button:focus span {
         color: var(--secondary-color);
     }
     .artist-placeholder-image {

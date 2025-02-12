@@ -163,6 +163,12 @@ export const correctionColors = writable(defaultCorrection);
 export const ditherImages = writable(true);
 export const recentArtists = writable([]);
 
+recentArtists.subscribe(artists => {
+    if (artists.length > 7) {
+        recentArtists.set(artists.slice(0, 7));
+    }
+});
+
 
 currentTheme.subscribe(theme => {
     themeColors.set({

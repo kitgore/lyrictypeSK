@@ -258,11 +258,14 @@
         align-items: center;
     }
 
-    .controlButton:hover {
+    .controlButton:hover,
+    .controlButton:active,
+    .controlButton:focus {
         background-size: 2px 2px; /* Size of the checker squares */
         background-image:
             linear-gradient(45deg, var(--primary-color), 25%, transparent 25%, transparent 75%, var(--primary-color) 75%, var(--primary-color)),
             linear-gradient(45deg, var(--primary-color) 25%, var(--secondary-color), 25%, var(--secondary-color) 75%, var(--primary-color) 75%, var(--primary-color));
+        outline: none
     }
 
     .controlIcon {

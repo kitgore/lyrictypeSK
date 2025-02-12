@@ -3,6 +3,7 @@
 	import ResultsDisplay from './ResultsDisplay.svelte';
 	import { applyDitheringToImage } from '$lib/services/dither-utils';
 	import { ditherImages, imageColors, correctionColors } from '$lib/services/store.js';
+	import { normalizeDiacritics } from 'normalize-text';
 	export let lyrics;
 	export let songTitle;
 	export let artistName;
@@ -19,6 +20,7 @@
 	let accuracy = 0;
 	let preloadedImage;
 	let ditheredImageUrl = '';
+	let normalizedLyrics;
   
 	async function preloadAndDitherImage(src) {
 		try {
@@ -46,10 +48,10 @@
 
 	function startTest() {
 		if (!testStarted) {
-		startTime = new Date();
-		testStarted = true;
-		// Start dithering process when test starts
-		if (imageUrl) preloadAndDitherImage(imageUrl);
+			startTime = new Date();
+			testStarted = true;
+			// Start dithering process when test starts
+			if (imageUrl) preloadAndDitherImage(imageUrl);
 		}
 	}
 
@@ -64,26 +66,51 @@
 		focusInput();
 		if (imageUrl) preloadAndDitherImage(imageUrl);
 	});
+
+	// Mappings for characters that aren't handled by normalize-text
+	const customCharMap = {
+		'¿': '?',
+		'¡': '!',
+		'\n': ' ',
+		'ı': 'i',
+		'İ': 'I'
+	};
+
+	// Helper function to apply both normalize-text and our custom mappings
+	function customNormalize(text) {
+		// Ensure we're working with a string
+		let normalized = String(text || '');
+		// Apply custom replacements
+		Object.entries(customCharMap).forEach(([from, to]) => {
+		normalized = normalized.replace(new RegExp(from, 'g'), to);
+		});
+		// Apply diacritic normalization
+		return normalizeDiacritics(normalized);
+	}
+
+	$: normalizedLyrics = customNormalize(lyrics);
+
 	function handleInput(event) {
 		const newValue = event.target.value;
-		const nextChar = lyrics[userInput.length];
+		const normalizedNextChar = normalizeDiacritics(String([lyrics[userInput.length]]));
+		const normalizedLastChar = normalizeDiacritics(String([newValue[newValue.length - 1]]));
 		
 		if (newValue.length > userInput.length) {
 			const lastTypedChar = newValue[newValue.length - 1];
 
-			if(lastTypedChar === '~'){
+			if(lastTypedChar === '~'){ // Escape test
 				endTest();
 				return;
 			}
 			
-			// If next character is a space or newline, only allow space input
-			if ((nextChar === ' ' || nextChar === '\n') && lastTypedChar !== ' ') {
+			// Prevent user from typing non-space characters when the next character is a space or newline
+			if ((normalizedNextChar === ' ' || normalizedNextChar === '\n') && normalizedLastChar !== ' ') {
 				event.target.value = userInput;
 				return;
 			}
 			
-			// If next character is not a space or newline, prevent space input
-			if (nextChar !== ' ' && nextChar !== '\n' && lastTypedChar === ' ') {
+			// Prevent user from typing a space when the next character is not a space or newline
+			if (normalizedNextChar !== ' ' && normalizedNextChar !== '\n' && normalizedLastChar === ' ') {
 				event.target.value = userInput;
 				return;
 			}
@@ -123,36 +150,31 @@
 	// Reactive statement to update the class of each character span based on user input
 	$: {
 		if (userInput && formattedLyrics.length > 0) {
-			if (!testStarted) startTest();
-			if (userInput.length === lyrics.length) endTest();
-			
-			// Normalize userInput by collapsing multiple spaces and leaving single spaces intact.
-			const normalizedUserInput = userInput.replace(/ +/g, ' ');
+		if (!testStarted) startTest();
+		if (userInput.length === lyrics.length) endTest();
+		
+		// Use custom normalization for user input
+		const normalizedUserInput = customNormalize(userInput);
 
-			// Split the lyrics into characters but keep the newlines and other whitespace intact.
-			const lyricsChars = lyrics.split('');
+		const lyricsChars = lyrics.split('');
+		const normalizedLyricsChars = normalizedLyrics.split('');
+		const normalizedInputChars = normalizedUserInput.split('');
 
-			// Create an array of the same length as lyricsChars to track correct and incorrect input.
-			const updatedFormattedLyrics = lyricsChars.map((char, index) => {
+		const updatedFormattedLyrics = lyricsChars.map((char, index) => {
 			if (index < normalizedUserInput.length) {
-				let inputChar = normalizedUserInput[index];
-				// If the character in lyrics is a whitespace (space, newline, etc.), treat any space typed by the user as correct.
-				if (/\s/.test(char) && inputChar === ' ') {
-					inputChar = char;
-				}
-				return {
-					char,
-					class: inputChar === char ? 'correct' : 'incorrect'
-				};
+			const isCorrect = normalizedInputChars[index] === normalizedLyricsChars[index];
+			
+			return {
+				char,
+				class: isCorrect ? 'correct' : 'incorrect'
+			};
 			}
-			// For the characters not yet reached by userInput, return them as neutral.
 			return { char, class: '' };
-			});
+		});
 
-			formattedLyrics = updatedFormattedLyrics;
+		formattedLyrics = updatedFormattedLyrics;
 		} else if (userInput.length === 0) {
-			// If userInput is empty, reset all classes to ''
-			formattedLyrics = formattedLyrics.map(item => ({ ...item, class: '' }));
+		formattedLyrics = formattedLyrics.map(item => ({ ...item, class: '' }));
 		}
 	};
 

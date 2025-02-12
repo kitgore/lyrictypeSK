@@ -28,7 +28,7 @@
     let loading = false;
 
     function handleKeydown(event) {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (event.key === 'Enter') {
             event.preventDefault();
             focusInput();
         }
@@ -167,7 +167,16 @@
             <div class="sidebar">
                 <div class="artistList">
                     {#each fullArtistList as artist, index}
-                        <ArtistButton name={artist.name} imageUrl={artist.imageUrl || '/default-image.svg'} on:click={() => requeueArtist(artist.artistId)} />
+                    <ArtistButton 
+                        name={artist.name} 
+                        imageUrl={artist.imageUrl || '/default-image.svg'} 
+                        on:click={() => requeueArtist(artist.artistId)} 
+                        on:keydown={(e) => {
+                        if (e.key === 'Enter') {
+                            requeueArtist(artist.artistId);
+                        }
+                        }} 
+                    />
                     {/each}
                 </div>
             </div>
