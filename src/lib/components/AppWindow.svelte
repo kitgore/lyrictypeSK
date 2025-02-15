@@ -45,7 +45,6 @@
             windowActions.activateWindow(id);
         }
     }
-
     function onDragStart(event) {
         if (!mounted || !appWindow) return;
         
@@ -64,30 +63,42 @@
         
         window.addEventListener('mousemove', onDrag);
         window.addEventListener('mouseup', onDragEnd);
+        window.addEventListener('mouseleave', onDragEnd); // Add this line
     }
 
     function onDrag(event) {
         if (!isDragging || !appWindow) return;
         
-        const currentPos = {
-            x: event.clientX - startPos.x + originalPos.x,
-            y: event.clientY - startPos.y + originalPos.y
-        };
+        // Get viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
         
-        appWindow.style.left = `${currentPos.x}px`;
-        appWindow.style.top = `${currentPos.y}px`;
+        // Get element dimensions
+        const rect = appWindow.getBoundingClientRect();
+        
+        // Calculate new position
+        let newX = event.clientX - startPos.x + originalPos.x;
+        let newY = event.clientY - startPos.y + originalPos.y;
+        
+        // Constrain to viewport boundaries
+        newX = Math.max(0, Math.min(newX, viewportWidth - rect.width));
+        newY = Math.max(0, Math.min(newY, viewportHeight - rect.height));
+        
+        appWindow.style.left = `${newX}px`;
+        appWindow.style.top = `${newY}px`;
     }
 
     function onDragEnd() {
         isDragging = false;
         window.removeEventListener('mousemove', onDrag);
         window.removeEventListener('mouseup', onDragEnd);
+        window.removeEventListener('mouseleave', onDragEnd); // Add this line
         
         // Update the stored position when dragging ends
         if (appWindow) {
             const newPosition = {
-                x: (appWindow.offsetLeft / window.innerWidth) * 100,
-                y: (appWindow.offsetTop / window.innerHeight) * 100
+                x: appWindow.style.left,
+                y: appWindow.style.top
             };
             windowActions.updatePosition(id, newPosition);
         }

@@ -45,7 +45,7 @@
             alignHoriz: false,
             alignVert: true,
             reProcess: true,
-            minFontSize: 32,
+            minFontSize: 5,
             maxFontSize: 90,
             multiLine: true
 
@@ -59,7 +59,7 @@
             alignHoriz: false,
             alignVert: true,
             reProcess: true,
-            minFontSize: 24,
+            minFontSize: 5,
             maxFontSize: 50,
             multiLine: true
         });
@@ -186,15 +186,16 @@
         height: 100%;
         justify-content: center;
         align-items: center;
+        position: relative;  /* Add this */
+        aspect-ratio: 1/1;  /* Add this */
     }
 
     .loading-placeholder {
         margin: 0;
-        height: 90%;
+        width: 90%;        /* Change from height to width */
+        aspect-ratio: 1/1; /* Add this */
         object-fit: contain;
         display: block;
-        max-width: 100%;
-        max-height: 100%;
         border: 2px solid var(--primary-color);
         background-color: var(--primary-color);
         opacity: 0.2;
@@ -203,11 +204,10 @@
 
     .albumArt {
         margin: 0;
-        height: 90%;
-        object-fit: contain;
+        width: 90%;        /* Change from height to width */
+        aspect-ratio: 1/1; /* Add this */
+        object-fit: cover;  /* Change from contain to cover */
         display: block;
-        max-width: 100%;
-        max-height: 100%;
         border: 2px solid var(--primary-color);
     }
 
