@@ -205,7 +205,7 @@ async function getSongsById(artistId, seenSongs) {
             artistId: song.primary_artist.id,
             songId: song.id,
             songIndex: songIndex,
-            lyrics: lyrics
+            lyrics: lyrics,
         };
         console.log(returnJSON)
         return returnJSON;

@@ -29,7 +29,8 @@
     "puppeteer": "^22.6.3",
     "js-cookie": "^3.0.5",
 		"robocopy": "^0.1.16",
-		"textfit": "^2.4.0"
+		"textfit": "^2.4.0",
+    "normalize-text": "^2.5.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0"

@@ -30,9 +30,8 @@
                     </div>
                     <h3>Authors:</h3>
                     <div class="registered-info">
-                        <p>kitgore</p>
-                        <p>4444est</p>
-                        <p>noschwa</p>
+                        <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/kitgore">kitgore</a></p>
+                        <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/4444est">4444est</a></p>
                     </div>
                     <h3>Stats:</h3>
                     <div class="stats">
@@ -67,21 +66,6 @@
         margin-top: 2vh;
     }
 
-    .button {
-        font-family: 'SysFont', sans-serif;
-        background-color: var(--secondary-color);
-        color: var(--primary-color);
-        border: 2px solid var(--primary-color);
-        border-radius: 5px;
-        font-size: 1.5em; 
-        width: max-content;
-        text-align: center;
-        cursor: pointer;
-        height: 100%;     
-        display: flex; 
-        align-items: center; 
-    }
-
     .logo{
         padding: 0
     }
@@ -99,7 +83,14 @@
 
     .registered-info {
         text-indent: 5em;
-        text-decoration: underline;
+    }
+
+    .registered-info a {
+        color: var(--primary-color);
+    }
+
+    .registered-info a:hover {
+        text-decoration: none;
     }
 
     /* Style the information items */

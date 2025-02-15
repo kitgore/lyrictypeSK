@@ -9,6 +9,8 @@
 	export let artistName;
 	export let imageUrl;
 	export let continueFromQueue;
+	export let replaySong;
+	export let geniusUrl;
 	let userInput = '';
 	let startTime = null;
 	let endTime = null;
@@ -73,7 +75,8 @@
 		'¡': '!',
 		'\n': ' ',
 		'ı': 'i',
-		'İ': 'I'
+		'İ': 'I',
+		'’': "'",
 	};
 
 	// Helper function to apply both normalize-text and our custom mappings
@@ -189,6 +192,16 @@
 	}
 
 	$: console.log('ditherImages value:', $ditherImages);
+
+	function replaySongInner() {
+		showResults = false;
+		userInput = '';
+		testStarted = false;
+		setTimeout(() => { // Wait for the DOM to update before focusing the input
+			focusInput();
+		}, 0);
+		replaySong();
+	}
 </script>
 
 {#if showResults && preloadedImage}
@@ -199,6 +212,8 @@
 		{artistName}
 		imageUrl={ditheredImageUrl}
 		{continueFromQueue}
+		replaySong={replaySongInner}
+		{geniusUrl}
 	/>
 {:else}
 	<div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>

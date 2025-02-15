@@ -17,6 +17,7 @@
     let songTitle = '';
     let artistName = '';
     let imageUrl = '';
+    let geniusUrl = '';
     let primaryArtist = '';
     let artistImg = '';
     let lyrics = '';
@@ -26,6 +27,7 @@
     let inputElement;
     let displayedArtist = 'Artist';
     let loading = false;
+    let currentSong;
 
     function handleKeydown(event) {
         if (event.key === 'Enter') {
@@ -46,14 +48,14 @@
             event.preventDefault(); // Prevent form submission
             lyrics = '';
             loading = true;
-            const data = await getArtistLyrics(artistInput)
-            console.log("HANDLE ENTER DATA:", data);
+            currentSong = await getArtistLyrics(artistInput)
+            console.log("HANDLE ENTER DATA:", currentSong);
             // const test = await searchByArtistId(1421, [], 2);
-            setDisplayFromData(data);
-            setNewRecentArtist({name: data.initialArtist, imageUrl: data.initialArtistImg, seenSongs: [data.songIndex], artistId: data.initialArtistId, songQueue: {}});
+            setDisplayFromData(currentSong);
+            setNewRecentArtist({name: currentSong.initialArtist, imageUrl: currentSong.initialArtistImg, seenSongs: [currentSong.songIndex], artistId: currentSong.initialArtistId, songQueue: {}});
             loading = false; 
             // set song queue of current artist
-            prepareQueue(data.initialArtistId);
+            prepareQueue(currentSong.initialArtistId);
         }
     }
 
@@ -85,6 +87,11 @@
         playNextFromQueue(currentArtistId);
     }
 
+    function replaySong(){
+        setDisplayFromData(currentSong);
+        loading = false;
+    }
+
     function playNextFromQueue(artistId) {
         const artist = $recentArtists.find(artist => artist.artistId === artistId);
         console.log("ARTIST AFTER PLAY NEXT", artist, $recentArtists)
@@ -92,6 +99,7 @@
             console.log("recentArtists", $recentArtists);
             
             console.log("NEXT SONG ", artist.songQueue);
+            currentSong = artist.songQueue;
             setDisplayFromData(artist.songQueue);
             prepareQueue(artistId);
             
@@ -110,7 +118,7 @@
     function setDisplayFromData(data){
         console.log("DISPLAYING DATA:" , data)
         if (data && data.lyrics) {
-            console.log(data)
+            console.log("SET DISPLAY FROM DATA:", data)
             lyrics = data.lyrics;
             songTitle = data.title;
             artistName = data.artist;
@@ -119,7 +127,7 @@
             artistImg = data.artistImg;
             artistId = data.artistId;
             songId = data.songId;
-
+            geniusUrl = data.url;
         } else {
             lyrics = "Lyrics not found.";
         }
@@ -184,11 +192,14 @@
                 <div class="lyricsContainer">
                     {#if lyrics}
                         <LyricDisplay 
-                        lyrics={lyrics} 
-                        songTitle={songTitle} 
-                        artistName={artistName} 
-                        imageUrl={imageUrl}
-                        continueFromQueue={continueFromQueue} />
+                            {lyrics} 
+                            {songTitle} 
+                            {artistName} 
+                            {imageUrl}
+                            {continueFromQueue}
+                            {replaySong} 
+                            {geniusUrl}
+                        />
                     {:else}
                         {#if loading}
                             <div class="loadingAnimationContainer">
@@ -200,6 +211,7 @@
             </div>
         </div>
     </div>
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="inputContainer" on:click={focusInput} on:keydown={handleKeydown}>
         <div class="inputLabel">Artist Name:</div>
         <div class="inputField" on:click={focusInput} on:keydown={handleKeydown}>
