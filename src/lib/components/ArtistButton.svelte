@@ -1,12 +1,14 @@
 <script>
     import { applyDitheringToImage } from '$lib/services/dither-utils';
-    import { themeColors, ditherImages, imageColors } from '$lib/services/store.js';
+    import { themeColors, ditherImages, imageColors, windowStore } from '$lib/services/store.js';
     export let name;
     export let imageUrl;
 
     let ditheredImageUrl = '';
     let isLoading = true;
     let currentImageUrl = ''; // Track the current image URL
+
+    $: windowHeight = $windowStore.windowStates.find(w => w.id === 'typingTestWindow')?.dimensions?.height;
 
     async function processDithering() {
         if (!imageUrl || imageUrl === '/default-image.svg') {
@@ -51,7 +53,7 @@
 
 {#if name}
     <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <div class="artist-button" role="button" on:click on:keydown  aria-label="Artist Button" tabindex=4>
+    <div class="artist-button" role="button" on:click on:keydown  aria-label="Artist Button" tabindex=4 style:border-radius="{windowHeight*0.019}px">
         <div class="image-container">
             {#if isLoading || !ditheredImageUrl}
                 <div class="loading-placeholder"></div>
@@ -59,10 +61,10 @@
                 <img src={ditheredImageUrl} alt={""} class="artist-image"/>
             {/if}
         </div>
-        <span>{name}</span>
+        <span style:font-size="{windowHeight*0.026}px">{name}</span>
     </div>
 {:else}
-    <div class="artist-button-empty">
+    <div class="artist-button-empty" style:border-radius="{windowHeight*0.019}px">
         <div class="artist-placeholder-image"></div>
         <div class="artist-placeholder-text"></div>
     </div>

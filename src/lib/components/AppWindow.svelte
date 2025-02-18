@@ -8,7 +8,7 @@
     
     import { windowStore, windowActions } from '$lib/services/store.js';
     import CustomScrollbar from './CustomScrollbar.svelte';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, setContext } from 'svelte';
     
     let contentElement;
     let isDragging = false;
@@ -22,6 +22,8 @@
     const unsubscribe = windowStore.subscribe(state => {
         windowState = state.windowStates.find(w => w.id === id) || {};
     });
+
+    $: setContext('windowHeight', dimensions.height);
 
     onMount(() => {
         mounted = true;
@@ -113,13 +115,13 @@
     style="
         top: {windowState.position?.y || position.y}vh;
         left: {windowState.position?.x || position.x}vw;
-        width: {dimensions.width}%;
-        height: {dimensions.height}vh;
+        width: {dimensions.width}px;
+        height: {dimensions.height}px;
         z-index: {windowState.zIndex || 1};
     "
 >
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="title-bar" on:mousedown|preventDefault={onDragStart}>
+    <div class="title-bar" style:height="{dimensions.height*0.05}px" on:mousedown|preventDefault={onDragStart}>
         <div class="lines-container">
             <svg 
                 width="100%" 
@@ -137,8 +139,8 @@
                 <line x1="0" y1="22" x2="100%" y2="22" stroke="var(--primary-color)" stroke-width="1.5"/>
             </svg>
         </div>
-        <div class="title-text">{title}</div>
-        <button class="close-button" on:click={onClose}></button>
+        <div class="title-text" style:font-size="{dimensions.height*0.036}px">{title}</div>
+        <button class="close-button" on:click={onClose} style:right="{dimensions.height*0.04}px"></button>
     </div>
     <div class="window-content" bind:this={contentElement}>
         <div class="content-area">
@@ -172,7 +174,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 4vh;
     color: var(--primary-color);
 }
 
@@ -198,12 +199,11 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 3vh;
     user-select: none;
     color: var(--primary-color);
     line-height: .9;
 }
-
+/* {dimensions.height}px */
 .close-button {
     position: absolute;
     right: 1.5vw;

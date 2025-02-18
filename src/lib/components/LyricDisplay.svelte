@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import ResultsDisplay from './ResultsDisplay.svelte';
 	import { applyDitheringToImage } from '$lib/services/dither-utils';
-	import { ditherImages, imageColors, correctionColors } from '$lib/services/store.js';
+	import { ditherImages, imageColors, correctionColors, windowStore } from '$lib/services/store.js';
 	import { normalizeDiacritics } from 'normalize-text';
 	export let lyrics;
 	export let songTitle;
@@ -24,6 +24,8 @@
 	let ditheredImageUrl = '';
 	let normalizedLyrics;
   
+	$: windowHeight = $windowStore.windowStates.find(w => w.id === 'typingTestWindow')?.dimensions?.height;
+	
 	async function preloadAndDitherImage(src) {
 		try {
 		// First dither the image
@@ -216,15 +218,15 @@
 		{geniusUrl}
 	/>
 {:else}
-	<div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput}>
+	<div class="quote-display" role="button" tabindex="0" on:click={focusInput} on:keydown={focusInput} style:line-height="{windowHeight*0.07}px">
     {#each formattedLyrics as { char, class: spanClass }, i}
       {#if i === cursorPosition}
-        <span class="blinking-cursor"></span>
+        <span class="blinking-cursor" style:font-size="{windowHeight*0.04}px" style:height="{windowHeight*0.04}px"></span>
       {/if}
-      <span class={spanClass}>{char}</span>
+      <span class={spanClass} style:font-size="{windowHeight*0.04}px" style:height="{windowHeight*0.04}px">{char}</span>
     {/each}
     {#if cursorPosition === formattedLyrics.length}
-      <span class="blinking-cursor"></span>
+      <span class="blinking-cursor" style:top="{windowHeight*0.04}px" ></span>
     {/if}
 		<input 
 			bind:this={inputElement} 
@@ -267,8 +269,6 @@
 		padding: 1.5%;
 		letter-spacing: -.18em;
 		font-family: "Geneva", sans-serif;
-		font-size: 3.2vh;
-		line-height: 180%;
 		font-weight: 500;
 		color: var(--primary-color);
 	}
@@ -287,18 +287,17 @@
 	}
 
 	.blinking-cursor {
-    display: inline-block;
-    width: 2px; 
-    height: 1.2em;
-    margin: 0;
-    margin-right: -6px;
-    margin-left: 4px;
-    vertical-align: text-bottom;
-    background-color: currentColor;
-    animation: blink-animation 1s steps(1) infinite;
-    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--primary-color);
-  }
+		display: inline-block;
+		width: 2px; 
+		height: 1.2em;
+		margin: 0;
+		margin-right: -.22em;
+		margin-left: .15em;
+		background-color: currentColor;
+		animation: blink-animation 1s steps(1) infinite;
+		transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+		color: var(--primary-color);
+	}
 	.cursor-placeholder {
 		width: 0;
 		margin: 0;

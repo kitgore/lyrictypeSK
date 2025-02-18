@@ -263,16 +263,26 @@ cookiesAccepted.subscribe(accepted => {
 
 const initialState = {
     activeWindowId: null,
+    nextZIndex: 0,
     windowStates: [],
-    nextZIndex: 1
+    screenDimensions: {
+        width: typeof window !== 'undefined' ? window.innerWidth : 0,
+        height: typeof window !== 'undefined' ? window.innerHeight : 0
+    }
 };
 
 export const windowStore = writable(initialState);
 
+// Derived store for aspect ratio
+export const aspectRatio = derived(
+    windowStore,
+    $store => $store.screenDimensions.width / $store.screenDimensions.height
+);
+
 export const windowActions = {
     activateWindow: (id) => {
         if (!id) return;
-        
+       
         windowStore.update(state => {
             const newNextZIndex = state.nextZIndex + 1;
             return {
@@ -290,17 +300,23 @@ export const windowActions = {
 
     addWindow: (windowData) => {
         if (!windowData.id) return;
-        
+       
         windowStore.update(state => {
             const existingWindow = state.windowStates.find(w => w.id === windowData.id);
             
+            // Calculate dimensions based on screen size
+            const dimensions = windowData.id === 'typingTestWindow' 
+                ? calculateResponsiveDimensions(state.screenDimensions)
+                : windowData.dimensions;
+           
             if (existingWindow) {
                 return {
                     ...state,
                     activeWindowId: windowData.id,
                     windowStates: state.windowStates.map(w => ({
                         ...w,
-                        isActive: w.id === windowData.id
+                        isActive: w.id === windowData.id,
+                        dimensions: w.id === windowData.id ? dimensions : w.dimensions
                     }))
                 };
             }
@@ -310,10 +326,12 @@ export const windowActions = {
                 ...windowData,
                 zIndex: newNextZIndex,
                 isActive: true,
-                position: windowData.position
+                position: windowData.position,
+                dimensions
             };
 
             return {
+                ...state,
                 activeWindowId: windowData.id,
                 nextZIndex: newNextZIndex,
                 windowStates: state.windowStates
@@ -325,12 +343,12 @@ export const windowActions = {
 
     removeWindow: (id) => {
         if (!id) return;
-        
+       
         windowStore.update(state => {
             const filteredWindows = state.windowStates.filter(w => w.id !== id);
             const lastWindow = filteredWindows[filteredWindows.length - 1];
-
             return {
+                ...state,
                 activeWindowId: lastWindow?.id ?? null,
                 nextZIndex: state.nextZIndex,
                 windowStates: filteredWindows.map(w => ({
@@ -343,17 +361,48 @@ export const windowActions = {
 
     updatePosition: (id, newPosition) => {
         if (!id) return;
-        
+       
         windowStore.update(state => ({
             ...state,
             windowStates: state.windowStates.map(window =>
-                window.id === id 
+                window.id === id
                     ? { ...window, position: newPosition }
                     : window
             )
         }));
+    },
+
+    updateScreenDimensions: (width, height) => {
+        windowStore.update(state => ({
+            ...state,
+            screenDimensions: { width, height },
+            windowStates: state.windowStates.map(window => ({
+                ...window,
+                dimensions: window.id === 'typingTestWindow' 
+                    ? calculateResponsiveDimensions({ width, height })
+                    : window.dimensions
+            }))
+        }));
     }
 };
+
+function calculateResponsiveDimensions({ width, height }) {
+    const ratio = width / height;
+    
+    if (ratio > 1.65) {
+        // Wide screen
+        return {
+            width: height * 0.8 * 2,
+            height: height * 0.8
+        };
+    } else {
+        // Narrow screen
+        return {
+            width: width * 0.94,
+            height: width * 0.94 / 2
+        };
+    }
+}
 
 export const tabIndexStore = derived(windowStore, ($windowStore) => {
     // Sort windows by z-index to determine tab order

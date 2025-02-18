@@ -33,6 +33,14 @@
         }
     });
 
+    let innerWidth;
+    let innerHeight;
+
+    // Use a reactive statement to update the store when dimensions change
+    $: if (innerWidth && innerHeight) {
+        windowActions.updateScreenDimensions(innerWidth, innerHeight);
+    }
+
     let componentRef; // This will hold the reference to your component instance
     
     $: if (componentRef) {
@@ -47,8 +55,7 @@
             isOpen: false, 
             showScrollbar: true, 
             component: TypingTest, 
-            position: { x: 10, y: 10 },
-            dimensions: {width: 80, height: 80}
+            position: { x: 10, y: 10 }
         },
         { 
             id: 'aboutDisplayWindow', 
@@ -69,6 +76,24 @@
             dimensions: {width: 37, height: 78} 
         }
     ];
+
+    onMount(() => {
+        if (typeof window !== 'undefined') {
+            const updateDimensions = () => {
+                windowActions.updateScreenDimensions(
+                    window.innerWidth,
+                    window.innerHeight
+                );
+            };
+
+            updateDimensions();
+            window.addEventListener('resize', updateDimensions);
+
+            return () => {
+                window.removeEventListener('resize', updateDimensions);
+            };
+        }
+    });
 
     function closeWindow(id) {
         if (!id) return;
@@ -99,6 +124,13 @@
         }
     }
 </script>
+
+
+<svelte:window
+    bind:innerWidth
+    bind:innerHeight
+/>
+
 <div 
 style:--primary-color={$themeColors.primary}
 style:--secondary-color={$themeColors.secondary}
@@ -118,19 +150,19 @@ style:--background-secondary-color={$backgroundColors.secondary}
 <DesktopIcon label="Trash" position={ {x: 91, y: 68} }>
     <svg slot="icon" width="80" height="80" viewBox="0 0 32 46" fill="none" xmlns="http://www.w3.org/2000/svg">    <rect x="12.5" y="0.5" width="8" height="1.93617" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/>    <rect x="0.5" y="2.45744" width="31" height="2.91489" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/>    <path d="M1.5 5.39362H30.5V44C30.5 44.8284 29.8284 45.5 29 45.5H3C2.17157 45.5 1.5 44.8284 1.5 44V5.39362Z" fill="{$themeColors.secondary}" stroke="{$themeColors.primary}"/>    <path d="M6 9.78723L6.89893 10.667C7.28334 11.0433 7.5 11.5585 7.5 12.0964V39.0445C7.5 39.7203 7.1588 40.3503 6.5929 40.7195L6 41.1064" stroke="{$themeColors.primary}"/>    <path d="M12 9.78723L12.8989 10.667C13.2833 11.0433 13.5 11.5585 13.5 12.0964V39.0445C13.5 39.7203 13.1588 40.3503 12.5929 40.7195L12 41.1064" stroke="{$themeColors.primary}"/>    <path d="M18 9.78723L18.8989 10.667C19.2833 11.0433 19.5 11.5585 19.5 12.0964V39.0445C19.5 39.7203 19.1588 40.3503 18.5929 40.7195L18 41.1064" stroke="{$themeColors.primary}"/>    <path d="M24 9.78723L24.8989 10.667C25.2833 11.0433 25.5 11.5585 25.5 12.0964V39.0445C25.5 39.7203 25.1588 40.3503 24.5929 40.7195L24 41.1064" stroke="{$themeColors.primary}"/></svg>    
 </DesktopIcon>
-    {#each windows.filter(w => w.isOpen) as window (window.id)}
-        <AppWindow 
+{#each windows.filter(w => w.isOpen) as window (window.id)}
+    <AppWindow 
+        id={window.id}
+        title={window.title}
+        showScrollbar={window.showScrollbar}
+        position={window.position}
+        dimensions={$windowStore.windowStates.find(w => w.id === window.id)?.dimensions}
+        onClose={() => closeWindow(window.id)}
+    >
+        <svelte:component 
+            this={window.component} 
             id={window.id}
-            title={window.title}
-            showScrollbar={window.showScrollbar}
-            position={window.position}
-            dimensions={window.dimensions}
-            onClose={() => closeWindow(window.id)}
-        >
-            <svelte:component 
-                this={window.component} 
-                id={window.id}
-            />
-        </AppWindow>
-    {/each}
+        />
+    </AppWindow>
+{/each}
 </div>
