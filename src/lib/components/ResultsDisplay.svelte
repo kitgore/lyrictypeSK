@@ -11,12 +11,11 @@
     import { onMount, afterUpdate } from 'svelte';
     let songContainer;
     let artistContainer;
-    import { themeColors, ditherImages, imageColors } from '$lib/services/store.js';
-    import { applyDitheringToImage } from '$lib/services/dither-utils';
+    import { themeColors, windowStore } from '$lib/services/store.js';
 
-    let ditheredImageUrl = '';
+    $: windowHeight = $windowStore.windowStates.find(w => w.id === 'typingTestWindow')?.dimensions?.height;
+    
     let isLoading = false;
-    let currentImageUrl = '';
 
 
     function handleResize() {
@@ -85,11 +84,11 @@
                 <div class="artistName"></div> -->
             </div>
         </div>
-        <div class="statsContainer">
-            <p class="statLabel">wpm:</p>
-            <p class="statValue">{wpm.toFixed(1)}</p>
-            <p class="statLabel">acc:</p>
-            <p class="statValue">{accuracy === 100 ? "100%" : accuracy.toFixed(1) + "%"}</p>
+        <div class="statsContainer"  >
+            <p class="statLabel" style:font-size="{windowHeight*0.045}px">wpm:</p>
+            <p class="statValue" style:font-size="{windowHeight*0.075}px">{wpm.toFixed(1)}</p>
+            <p class="statLabel" style:font-size="{windowHeight*0.045}px">acc:</p>
+            <p class="statValue" style:font-size="{windowHeight*0.075}px">{accuracy === 100 ? "100%" : accuracy.toFixed(1) + "%"}</p>
         </div>
     </div>
     <div class="bottomSection">

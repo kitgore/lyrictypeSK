@@ -305,9 +305,8 @@ export const windowActions = {
             const existingWindow = state.windowStates.find(w => w.id === windowData.id);
             
             // Calculate dimensions based on screen size
-            const dimensions = windowData.id === 'typingTestWindow' 
-                ? calculateResponsiveDimensions(state.screenDimensions)
-                : windowData.dimensions;
+            const dimensions = windowData.id ? 
+                calculateResponsiveDimensions(state.screenDimensions.width, state.screenDimensions.height, windowData.id) : windowData.dimensions
            
             if (existingWindow) {
                 return {
@@ -378,29 +377,57 @@ export const windowActions = {
             screenDimensions: { width, height },
             windowStates: state.windowStates.map(window => ({
                 ...window,
-                dimensions: window.id === 'typingTestWindow' 
-                    ? calculateResponsiveDimensions({ width, height })
-                    : window.dimensions
+                dimensions: window.id ? calculateResponsiveDimensions(width, height, window.id) : window.dimensions
             }))
         }));
     }
 };
 
-function calculateResponsiveDimensions({ width, height }) {
+function calculateResponsiveDimensions(width, height, windowId) {
     const ratio = width / height;
-    
-    if (ratio > 1.65) {
-        // Wide screen
-        return {
-            width: height * 0.8 * 2,
-            height: height * 0.8
-        };
-    } else {
-        // Narrow screen
-        return {
-            width: width * 0.94,
-            height: width * 0.94 / 2
-        };
+    console.log("WindowID: " + windowId)
+    if(windowId === 'typingTestWindow') {
+        if (ratio > 1.65) {
+            // Wide screen
+            return {
+                width: height * 0.8 * 2,
+                height: height * 0.8
+            };
+        } else {
+            // Narrow screen
+            return {
+                width: width * 0.94,
+                height: width * 0.94 / 2
+            };
+        }
+    } else if(windowId === 'aboutDisplayWindow'){
+        if (ratio > 1.65) {
+            // Wide screen
+            return {
+                width: height * 0.7 * 0.8,
+                height: height * 0.7
+            };
+        } else {
+            // Narrow screen
+            return {
+                width: width * 0.4,
+                height: width * 0.5
+            };
+        }
+    } else if(windowId === 'settingsWindow'){
+        if (ratio > 1.65) {
+            // Wide screen
+            return {
+                width: height * 0.6,
+                height: height * 0.7
+            };
+        } else {
+            // Narrow screen
+            return {
+                width: width * 0.7 / 2,
+                height: width * 0.41
+            };
+        }
     }
 }
 
